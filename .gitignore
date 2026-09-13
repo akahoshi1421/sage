@@ -1,0 +1,17 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+.env
+.nitro
+.tanstack
+.output
+.vinxi
+__unconfig*
+storybook-static
+*.log
+*.tsbuildinfo
+
+# Digital Agency design assets (downloaded locally, not committed)
+docs/designsystem-assets/

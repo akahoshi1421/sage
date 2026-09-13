@@ -1,0 +1,77 @@
+{
+  "name": "@akahoshi1421/sage",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A type-challenges style framework for learning any library or technology with AI coding agents",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akahoshi1421/sage.git"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "generate-routes": "tsr generate",
+    "generate:tokens": "node scripts/generate-dads-tokens.ts && oxfmt src/theme/dads-tokens.ts",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "typegen": "chakra typegen ./src/theme/system.ts",
+    "prepare": "husky && npm run typegen"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.37.0",
+    "@clack/prompts": "^1.8.1",
+    "@emotion/react": "^11.14.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@tanstack/react-query": "^5.102.8",
+    "@tanstack/react-router": "^1.170.36",
+    "@tanstack/react-start": "^1.168.53",
+    "drizzle-orm": "^0.45.2",
+    "jotai": "^2.20.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@chakra-ui/cli": "^3.37.0",
+    "@digital-go-jp/design-tokens": "^2.0.1",
+    "@storybook/addon-a11y": "^10.6.0",
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/react-vite": "^10.6.0",
+    "@tanstack/router-cli": "^1.167.36",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^26.5.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "drizzle-kit": "^0.31.10",
+    "eslint-plugin-storybook": "^10.6.0",
+    "husky": "^9.1.7",
+    "jsdom": "^29.1.1",
+    "lint-staged": "^17.5.1",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
+    "storybook": "^10.6.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0",
+    "vitest": "^4.1.11"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vitest", "unicorn", "react", "import", "jsx-a11y"],
+  "jsPlugins": ["eslint-plugin-storybook"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@chakra-ui/react",
+            "message": "UI では @chakra-ui/react を直接 import せず、#/components/ui のコンポーネントを使ってください (docs/コード設計.md)。"
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["@chakra-ui/react/*", "@emotion/*"],
+            "message": "UI では Chakra UI / Emotion を直接 import せず、#/components/ui のコンポーネントを使ってください (docs/コード設計.md)。"
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/components/ui/**", "src/theme/**", ".storybook/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["**/*.stories.@(ts|tsx)"],
+      "rules": {
+        "react/rules-of-hooks": "off",
+        "storybook/await-interactions": "error",
+        "storybook/context-in-play-function": "error",
+        "storybook/default-exports": "error",
+        "storybook/hierarchy-separator": "warn",
+        "storybook/no-redundant-story-name": "warn",
+        "storybook/no-renderer-packages": "error",
+        "storybook/prefer-pascal-case": "warn",
+        "storybook/story-exports": "error",
+        "storybook/use-storybook-expect": "error",
+        "storybook/use-storybook-testing-library": "error"
+      }
+    },
+    {
+      "files": [".storybook/main.@(ts|js)"],
+      "rules": {
+        "storybook/no-uninstalled-addons": "error"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "dist/**",
+    ".output/**",
+    ".tanstack/**",
+    "storybook-static/**",
+    "docs/**",
+    "src/routeTree.gen.ts"
+  ]
+}

@@ -8,6 +8,10 @@ import {
 } from "@chakra-ui/react";
 
 import { dadsTokens } from "./dads-tokens";
+import { accordionSlotRecipe } from "./recipes/accordion";
+import { dialogSlotRecipe } from "./recipes/dialog";
+import { drawerSlotRecipe } from "./recipes/drawer";
+import { splitterSlotRecipe } from "./recipes/splitter";
 import { textStyles } from "./text-styles";
 
 type Scale = Record<string, string | number>;
@@ -150,6 +154,12 @@ const config = defineConfig({
     tokens,
     semanticTokens,
     textStyles,
+    slotRecipes: {
+      accordion: accordionSlotRecipe,
+      dialog: dialogSlotRecipe,
+      drawer: drawerSlotRecipe,
+      splitter: splitterSlotRecipe,
+    },
   },
 });
 

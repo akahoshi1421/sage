@@ -28,7 +28,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typegen": "chakra typegen ./src/theme/system.ts",
-    "prepare": "husky && npm run typegen"
+    "prepare": "husky && npm run typegen",
+    "generate:icons": "node scripts/generate-icons.ts && oxfmt src/components/ui/icons/dads-icons.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.37.0",

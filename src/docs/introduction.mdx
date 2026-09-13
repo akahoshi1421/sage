@@ -1,0 +1,27 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Docs/はじめに" />
+
+# sage デザインシステム
+
+sage の Web 版 UI で使う部品の一覧です。見た目は
+[デジタル庁デザインシステム (DADS)](https://design.digital.go.jp/dads/) に準拠し、
+[Chakra UI v3](https://chakra-ui.com/) のテーマとレシピで実装しています。
+
+## 構成
+
+- **Foundations**: 色・タイポグラフィなどのデザイントークン (`@digital-go-jp/design-tokens` 由来)
+- **Layout**: 配置・余白・サイズだけを扱うレイアウト部品
+- **UI**: ボタン・見出し・ダイアログ・アコーディオンなどの部品
+- **Pages**: 部品を組み合わせた画面の構成例 (トップページ・回答ページ)
+
+## 使い方のルール
+
+- アプリ本体では `@chakra-ui/react` を直接 import せず、`#/components/ui` の部品を使います
+  (lint で検出されます)。
+- 見た目は部品の `variant` / `size` で選び、任意のスタイルを props で指定しません。
+
+## 出典
+
+- 出典: デジタル庁デザインシステムウェブサイト https://design.digital.go.jp/dads/
+- アイコン: 「イラストレーション・アイコン素材」(デジタル庁) を元に、塗り色を currentColor に置き換える加工をしています。

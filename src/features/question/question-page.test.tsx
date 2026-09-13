@@ -61,7 +61,9 @@ describe("回答ページ", () => {
     await userEvent.click(trigger);
 
     // Assert
-    expect(screen.getByText(/の戻り値は/)).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText(/の戻り値は/)).toBeVisible();
+    });
   });
 
   it("「答えを見る」を押すと答えと解説がダイアログで表示され、閉じられる", async () => {

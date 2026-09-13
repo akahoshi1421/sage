@@ -1,6 +1,6 @@
 {
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".output", ".tanstack", "storybook-static"],
+  "exclude": ["node_modules", "dist", ".output", ".tanstack", "storybook-static", ".claude"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",

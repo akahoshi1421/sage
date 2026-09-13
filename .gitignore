@@ -15,3 +15,6 @@ storybook-static
 
 # Digital Agency design assets (downloaded locally, not committed)
 docs/designsystem-assets/
+
+# Claude Code agent worktrees
+.claude/worktrees/

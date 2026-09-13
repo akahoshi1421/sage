@@ -1,4 +1,4 @@
 {
   "$schema": "https://oxc.rs/schemas/oxfmt.json",
-  "ignorePatterns": ["docs/**", "src/routeTree.gen.ts"]
+  "ignorePatterns": ["docs/**", ".claude/**", "src/routeTree.gen.ts"]
 }

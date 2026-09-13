@@ -98,9 +98,7 @@ export const questionDetailFixture: QuestionDetail = {
   title: "ref でリアクティブな値を作る",
   difficulty: "easy",
   solved: false,
-  question: `# ref でリアクティブな値を作る
-
-\`ref\` を使ってカウンターを作ってください。
+  question: `\`ref\` を使ってカウンターを作ってください。
 
 ## 要件
 

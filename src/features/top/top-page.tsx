@@ -5,16 +5,13 @@ import {
   Container,
   Flex,
   Heading,
-  Icon,
-  Link,
-  List,
-  ListItem,
   Markdown,
   Panel,
   Text,
   VStack,
 } from "#/components/ui";
 import { groupQuestionsByDifficulty } from "#/features/questions/group-by-difficulty";
+import { QuestionList } from "#/features/questions/question-list";
 import type { QuestionSummary, Subject } from "#/features/questions/types";
 import { useMessages } from "#/i18n/locale";
 
@@ -61,22 +58,7 @@ export function TopPage({ subject, questions, questionHref }: TopPageProps) {
                       w="20rem"
                       maxH="32rem"
                     >
-                      <List as="ol" spacing="4">
-                        {group.questions.map((question) => (
-                          <ListItem key={question.number} value={question.number}>
-                            {question.solved && (
-                              <Text as="span" color="success">
-                                <Icon
-                                  name="complete_fill"
-                                  size="sm"
-                                  label={messages.question.solved}
-                                />{" "}
-                              </Text>
-                            )}
-                            <Link href={questionHref(question)}>{question.title}</Link>
-                          </ListItem>
-                        ))}
-                      </List>
+                      <QuestionList questions={group.questions} questionHref={questionHref} />
                     </Panel>
                   ))}
                 </Flex>

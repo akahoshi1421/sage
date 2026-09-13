@@ -10,6 +10,7 @@ export const messages = {
       backToTop: "トップへ戻る",
       github: "GitHub",
       openInNewTab: "新規タブで開きます",
+      resizePanes: "表示領域の比率を変更",
     },
     difficulty: {
       "warm-up": "warm-up",
@@ -47,6 +48,7 @@ export const messages = {
       backToTop: "Back to top",
       github: "GitHub",
       openInNewTab: "Opens in a new tab",
+      resizePanes: "Resize panes",
     },
     difficulty: {
       "warm-up": "warm-up",

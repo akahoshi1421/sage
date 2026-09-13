@@ -1,4 +1,7 @@
+export { AppFooter, type AppFooterLink, type AppFooterProps } from "./app-footer";
+export { AppHeader, type AppHeaderProps } from "./app-header";
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
+export { CodeEditor, type CodeEditorProps, languageFromFilename } from "./code-editor";
 export { Divider, type DividerColor, type DividerProps } from "./divider";
 export {
   Heading,
@@ -38,6 +41,8 @@ export {
   type ListProps,
   type ListSpacing,
 } from "./list";
+export { Markdown, type MarkdownProps } from "./markdown";
+export { Panel, type PanelProps, type PanelSize, type PanelVariant } from "./panel";
 export { UIProvider, type UIProviderProps } from "./provider";
 export { StatusBadge, type StatusBadgeProps, type StatusBadgeStatus } from "./status-badge";
 export { Text, type TextColor, type TextProps } from "./text";

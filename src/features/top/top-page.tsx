@@ -5,7 +5,6 @@ import {
   Container,
   Flex,
   Heading,
-  HStack,
   Icon,
   Link,
   List,
@@ -65,18 +64,16 @@ export function TopPage({ subject, questions, questionHref }: TopPageProps) {
                       <List as="ol" spacing="4">
                         {group.questions.map((question) => (
                           <ListItem key={question.number} value={question.number}>
-                            <HStack gap="1" align="center">
-                              {question.solved && (
-                                <Text as="span" color="success">
-                                  <Icon
-                                    name="complete_fill"
-                                    size="sm"
-                                    label={messages.question.solved}
-                                  />
-                                </Text>
-                              )}
-                              <Link href={questionHref(question)}>{question.title}</Link>
-                            </HStack>
+                            {question.solved && (
+                              <Text as="span" color="success">
+                                <Icon
+                                  name="complete_fill"
+                                  size="sm"
+                                  label={messages.question.solved}
+                                />{" "}
+                              </Text>
+                            )}
+                            <Link href={questionHref(question)}>{question.title}</Link>
                           </ListItem>
                         ))}
                       </List>

@@ -37,6 +37,7 @@ export function Icon({ name, size = "md", label, ...rest }: IconProps) {
       width={sizeMap[size]}
       height={sizeMap[size]}
       display="inline-block"
+      verticalAlign="middle"
       flexShrink={0}
       fill="none"
       role={label ? "img" : undefined}

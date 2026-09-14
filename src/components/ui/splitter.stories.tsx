@@ -21,7 +21,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <Box h="28rem" p="4">
+      <Box h="28rem" p="md">
         <Story />
       </Box>
     ),
@@ -39,15 +39,17 @@ const paragraphs = (count: number) =>
   ));
 
 const questionPane = (
-  <VStack align="stretch" gap="3" p="4">
-    <Text textStyle="std-20B-150">warm-up 1 Hello World</Text>
+  <VStack align="stretch" gap="md" p="md">
+    <Text size="xl" weight="bold">
+      warm-up 1 Hello World
+    </Text>
     {paragraphs(8)}
   </VStack>
 );
 
 const codePane = (
-  <Box p="4">
-    <Text as="span" textStyle="mono-16N-150">
+  <Box p="md">
+    <Text as="span" size="sm">
       {"export const message = 'Hello World';"}
     </Text>
   </Box>

@@ -31,7 +31,7 @@ export const External: Story = {
 export const InText: Story = {
   name: "文中のリンク",
   render: () => (
-    <VStack align="start" gap="4" maxW="40rem">
+    <VStack align="start" gap="md" maxW="40rem">
       <Text>
         <Link href="https://vuejs.org/" target="_blank">
           vue.js
@@ -40,7 +40,7 @@ export const InText: Story = {
         <Link href="#">公式ドキュメント</Link>
         を読みながら問題を解いてみましょう。
       </Text>
-      <Text textStyle="std-16N-170" color="muted">
+      <Text color="muted">
         訪問済みは magenta、押下中は orange、フォーカス時は黄色の背景と黒い枠で表示されます。
       </Text>
     </VStack>

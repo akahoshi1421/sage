@@ -45,10 +45,10 @@ export const Sticky: Story = {
   name: "上部に固定",
   args: { sticky: true },
   render: (args) => (
-    <VStack align="stretch" gap="0">
+    <VStack align="stretch" gap="none">
       <AppHeader {...args} />
-      <Box p="6">
-        <VStack align="start" gap="4">
+      <Box p="lg">
+        <VStack align="start" gap="md">
           {Array.from({ length: 30 }, (_, index) => (
             <Text key={index}>スクロールしてもヘッダーが画面上部に残ります ({index + 1})</Text>
           ))}

@@ -5,10 +5,10 @@ import { Box, VStack } from "./layout";
 import { Text } from "./text";
 
 const questionList = (titles: string[]) => (
-  <Box as="ol" pl="6">
+  <Box as="ol" pl="lg">
     {titles.map((title) => (
-      <Box key={title} as="li" py="1">
-        <Text as="span" textStyle="dns-16N-130">
+      <Box key={title} as="li" py="xs">
+        <Text as="span" size="sm">
           {title}
         </Text>
       </Box>
@@ -27,7 +27,7 @@ const meta = {
         value: "hint",
         title: "ヒントを見る",
         content: (
-          <VStack align="stretch" gap="2">
+          <VStack align="stretch" gap="sm">
             <Text>配列の各要素を変換するには `map` を使います。</Text>
             <Text>戻り値の配列の長さは元の配列と同じになります。</Text>
           </VStack>

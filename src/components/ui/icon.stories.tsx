@@ -26,11 +26,11 @@ export const Playground: Story = {};
 export const All: Story = {
   name: "一覧",
   render: () => (
-    <Grid templateColumns="repeat(auto-fill, minmax(9rem, 1fr))" gap="4">
+    <Grid templateColumns="repeat(auto-fill, minmax(9rem, 1fr))" gap="md">
       {iconNames.map((name) => (
-        <VStack key={name} gap="1">
+        <VStack key={name} gap="xs">
           <Icon name={name} size="lg" />
-          <Text textStyle="mono-14N-150" color="muted">
+          <Text size="xs" color="muted">
             {name}
           </Text>
         </VStack>
@@ -42,7 +42,7 @@ export const All: Story = {
 export const Sizes: Story = {
   name: "サイズ",
   render: () => (
-    <HStack gap="4" align="center">
+    <HStack gap="md" align="center">
       <Icon name="menu_line" size="sm" />
       <Icon name="menu_line" size="md" />
       <Icon name="menu_line" size="lg" />
@@ -53,7 +53,7 @@ export const Sizes: Story = {
 export const WithLabel: Story = {
   name: "意味を持つアイコン (ラベル付き)",
   render: () => (
-    <HStack gap="2" align="center">
+    <HStack gap="sm" align="center">
       <Icon name="complete_fill" label="正解" />
       <Text>ラベルを付けると読み上げ対象になります</Text>
     </HStack>

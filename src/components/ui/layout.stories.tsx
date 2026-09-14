@@ -13,8 +13,8 @@ type Story = StoryObj<typeof meta>;
 
 /** ストーリー内で領域を見せるための枠 (レイアウト部品自体に色は付かない) */
 const Block = ({ children }: { children: string }) => (
-  <Box p="3" minW="6rem" className="layout-demo-block">
-    <Text textStyle="dns-14N-130" align="center">
+  <Box p="md" minW="6rem" className="layout-demo-block">
+    <Text size="xs" align="center">
       {children}
     </Text>
   </Box>
@@ -27,19 +27,19 @@ const demoStyle = `
 export const StackStory: Story = {
   name: "Stack / HStack / VStack",
   render: () => (
-    <VStack align="stretch" gap="8">
+    <VStack align="stretch" gap="xl">
       <style>{demoStyle}</style>
-      <VStack align="start" gap="2">
-        <Text textStyle="std-16B-170">HStack (gap=4)</Text>
-        <HStack gap="4">
+      <VStack align="start" gap="sm">
+        <Text weight="bold">HStack (gap=4)</Text>
+        <HStack gap="md">
           <Block>1</Block>
           <Block>2</Block>
           <Block>3</Block>
         </HStack>
       </VStack>
-      <VStack align="start" gap="2">
-        <Text textStyle="std-16B-170">VStack (gap=2)</Text>
-        <VStack gap="2" align="start">
+      <VStack align="start" gap="sm">
+        <Text weight="bold">VStack (gap=2)</Text>
+        <VStack gap="sm" align="start">
           <Block>1</Block>
           <Block>2</Block>
           <Block>3</Block>
@@ -52,7 +52,7 @@ export const StackStory: Story = {
 export const FlexStory: Story = {
   name: "Flex + Spacer",
   render: () => (
-    <Flex align="center" gap="4">
+    <Flex align="center" gap="md">
       <style>{demoStyle}</style>
       <Block>左</Block>
       <Spacer />
@@ -64,7 +64,7 @@ export const FlexStory: Story = {
 export const GridStory: Story = {
   name: "Grid",
   render: () => (
-    <Grid templateColumns="repeat(3, 1fr)" gap="4">
+    <Grid templateColumns="repeat(3, 1fr)" gap="md">
       <style>{demoStyle}</style>
       <GridItem colSpan={2}>
         <Block>colSpan=2</Block>

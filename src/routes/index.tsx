@@ -6,13 +6,13 @@ export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
   return (
-    <Container maxW="4xl" py="8">
-      <VStack align="start" gap="6">
+    <Container maxW="4xl" py="xl">
+      <VStack align="start" gap="lg">
         <Heading level="h1" size="36" chip>
           sage
         </Heading>
         <Text>AI 時代に新しいライブラリを効率的に学ぶためのフレームワークです。</Text>
-        <HStack gap="4">
+        <HStack gap="md">
           <Button>
             <Icon name="complete_line" />
             回答する

@@ -24,7 +24,7 @@ export const Playground: Story = {};
 export const Colors: Story = {
   name: "色",
   render: () => (
-    <VStack align="stretch" gap="4">
+    <VStack align="stretch" gap="md">
       <Text>gray-420 (既定)</Text>
       <Divider color="gray-420" />
       <Text>gray-536</Text>

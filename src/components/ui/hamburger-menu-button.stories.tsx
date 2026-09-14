@@ -25,7 +25,7 @@ export const Playground: Story = {};
 export const Variants: Story = {
   name: "バリエーション",
   render: () => (
-    <HStack gap="6" wrap="wrap">
+    <HStack gap="lg" wrap="wrap">
       <HamburgerMenuButton />
       <HamburgerMenuButton icon="close" label="閉じる" />
       <HamburgerMenuButton iconOnly label="メニューを開く" />

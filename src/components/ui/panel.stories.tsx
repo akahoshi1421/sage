@@ -29,7 +29,7 @@ export const Playground: Story = {};
 export const Variants: Story = {
   name: "バリエーション",
   render: () => (
-    <HStack gap="4" align="stretch" wrap="wrap">
+    <HStack gap="md" align="stretch" wrap="wrap">
       <Panel variant="outline" title="outline">
         <Text>枠線付き (既定)</Text>
       </Panel>
@@ -46,7 +46,7 @@ export const Variants: Story = {
 export const Sizes: Story = {
   name: "余白のサイズ",
   render: () => (
-    <VStack gap="4" align="stretch">
+    <VStack gap="md" align="stretch">
       <Panel size="sm" title="sm">
         <Text>余白 12px</Text>
       </Panel>
@@ -70,7 +70,7 @@ export const Scrollable: Story = {
   render: () => (
     <Box h="16rem" w="20rem">
       <Panel title="easy" scrollable h="100%">
-        <VStack as="ol" align="stretch" gap="2" pl="6">
+        <VStack as="ol" align="stretch" gap="sm" pl="lg">
           {Array.from({ length: 20 }, (_, index) => (
             <Text key={index} as="li">
               問題のタイトル {index + 1}

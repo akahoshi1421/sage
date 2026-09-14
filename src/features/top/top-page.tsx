@@ -32,10 +32,10 @@ export function TopPage({ subject, questions, questionHref }: TopPageProps) {
     <Flex direction="column" minH="100dvh">
       <AppHeader homeHref="/" />
       <Box as="main" flex="1">
-        <Container maxW="7xl" py="8">
-          <VStack align="stretch" gap="8">
+        <Container maxW="7xl" py="xl">
+          <VStack align="stretch" gap="xl">
             <Panel variant="subtle" size="lg">
-              <VStack align="stretch" gap="4">
+              <VStack align="stretch" gap="md">
                 <Heading level="h1" size="32">
                   {subject.name}
                 </Heading>
@@ -47,7 +47,7 @@ export function TopPage({ subject, questions, questionHref }: TopPageProps) {
               {groups.length === 0 ? (
                 <Text color="muted">{messages.question.empty}</Text>
               ) : (
-                <Flex gap="4" align="stretch" overflowX="auto" pb="2">
+                <Flex gap="md" align="stretch" overflowX="auto" pb="sm">
                   {groups.map((group) => (
                     <Panel
                       key={group.difficulty}

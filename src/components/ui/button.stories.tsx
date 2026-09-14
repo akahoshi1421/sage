@@ -28,7 +28,7 @@ export const Playground: Story = {};
 export const Variants: Story = {
   name: "バリエーション",
   render: () => (
-    <HStack gap="4" wrap="wrap">
+    <HStack gap="md" wrap="wrap">
       <Button variant="solid-fill">塗りボタン</Button>
       <Button variant="outline">アウトラインボタン</Button>
       <Button variant="text">テキストボタン</Button>
@@ -39,9 +39,9 @@ export const Variants: Story = {
 export const Sizes: Story = {
   name: "サイズ",
   render: () => (
-    <VStack align="start" gap="6">
+    <VStack align="start" gap="lg">
       {(["solid-fill", "outline", "text"] as const).map((variant) => (
-        <HStack key={variant} gap="4" align="center" wrap="wrap">
+        <HStack key={variant} gap="md" align="center" wrap="wrap">
           <Button variant={variant} size="lg">
             Large
           </Button>
@@ -63,7 +63,7 @@ export const Sizes: Story = {
 export const Disabled: Story = {
   name: "無効",
   render: () => (
-    <HStack gap="4" wrap="wrap">
+    <HStack gap="md" wrap="wrap">
       <Button variant="solid-fill" disabled>
         塗りボタン
       </Button>
@@ -80,7 +80,7 @@ export const Disabled: Story = {
 export const WithIcon: Story = {
   name: "アイコン付き",
   render: () => (
-    <HStack gap="4" wrap="wrap">
+    <HStack gap="md" wrap="wrap">
       <Button>
         <Icon name="complete_line" />
         回答する

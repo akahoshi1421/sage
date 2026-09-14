@@ -31,7 +31,7 @@ export const Playground: Story = {};
 export const Sizes: Story = {
   name: "サイズ",
   render: () => (
-    <VStack align="stretch" gap="6">
+    <VStack align="stretch" gap="lg">
       {(["64", "57", "45", "36", "32", "28", "24", "20", "18", "16"] as const).map((size) => (
         <Heading key={size} level="h2" size={size}>
           見出し {size}
@@ -44,7 +44,7 @@ export const Sizes: Story = {
 export const WithChip: Story = {
   name: "チップ付き",
   render: () => (
-    <VStack align="stretch" gap="6">
+    <VStack align="stretch" gap="lg">
       <Heading level="h2" size="32" chip>
         チップ付きの見出し
       </Heading>
@@ -58,7 +58,7 @@ export const WithChip: Story = {
 export const WithRule: Story = {
   name: "罫線付き",
   render: () => (
-    <VStack align="stretch" gap="8">
+    <VStack align="stretch" gap="xl">
       <Heading level="h2" size="36" rule="8">
         罫線 8
       </Heading>

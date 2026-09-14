@@ -12,12 +12,12 @@ const meta = {
   tags: ["autodocs"],
   args: {
     as: "ul",
-    spacing: "0",
+    spacing: "none",
   },
   argTypes: {
     as: { control: "radio", options: ["ul", "ol"] },
     marker: { control: "radio", options: [undefined, "disc", "decimal", "none"] },
-    spacing: { control: "radio", options: ["0", "4", "8", "12"] },
+    spacing: { control: "radio", options: ["none", "xs", "sm", "md"] },
   },
   render: (args) => (
     <List {...args}>
@@ -41,17 +41,17 @@ export const Ordered: Story = {
 export const Nested: Story = {
   name: "入れ子",
   render: () => (
-    <List spacing="4">
+    <List spacing="xs">
       <ListItem>
         warm-up
-        <List spacing="4">
+        <List spacing="xs">
           <ListItem>Hello World</ListItem>
           <ListItem>Reactive State</ListItem>
         </List>
       </ListItem>
       <ListItem>
         easy
-        <List spacing="4">
+        <List spacing="xs">
           <ListItem>Computed Properties</ListItem>
           <ListItem>Watchers</ListItem>
         </List>
@@ -63,10 +63,10 @@ export const Nested: Story = {
 export const Spacing: Story = {
   name: "項目間の余白",
   render: () => (
-    <HStack align="start" gap="12">
-      {(["0", "4", "8", "12"] as const).map((spacing) => (
-        <VStack key={spacing} align="start" gap="2">
-          <Text textStyle="std-16B-170">spacing={spacing}</Text>
+    <HStack align="start" gap="xl">
+      {(["none", "xs", "sm", "md"] as const).map((spacing) => (
+        <VStack key={spacing} align="start" gap="sm">
+          <Text weight="bold">spacing={spacing}</Text>
           <List spacing={spacing}>
             <ListItem>Hello World</ListItem>
             <ListItem>Reactive State</ListItem>
@@ -81,15 +81,15 @@ export const Spacing: Story = {
 export const QuestionList: Story = {
   name: "問題一覧 (正解済みにチェック)",
   render: () => (
-    <List as="ol" spacing="4">
+    <List as="ol" spacing="xs">
       <ListItem>
-        <HStack gap="1" as="span" display="inline-flex" align="center">
+        <HStack gap="xs" as="span" display="inline-flex" align="center">
           <Icon name="complete_fill" size="sm" label="正解済み" />
           <Link href="#">Hello World</Link>
         </HStack>
       </ListItem>
       <ListItem>
-        <HStack gap="1" as="span" display="inline-flex" align="center">
+        <HStack gap="xs" as="span" display="inline-flex" align="center">
           <Icon name="complete_fill" size="sm" label="正解済み" />
           <Link href="#">Reactive State</Link>
         </HStack>

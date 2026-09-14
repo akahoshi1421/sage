@@ -25,7 +25,7 @@ export const Playground: Story = {};
 export const Statuses: Story = {
   name: "状態",
   render: () => (
-    <HStack gap="4" wrap="wrap">
+    <HStack gap="md" wrap="wrap">
       <StatusBadge status="neutral">未回答</StatusBadge>
       <StatusBadge status="success">正解</StatusBadge>
       <StatusBadge status="warning">惜しい</StatusBadge>
@@ -37,8 +37,10 @@ export const Statuses: Story = {
 export const WithLabel: Story = {
   name: "見出しの横に付ける",
   render: () => (
-    <HStack gap="2" align="center">
-      <Text textStyle="std-20B-160">warm-up 1. Hello World</Text>
+    <HStack gap="sm" align="center">
+      <Text size="xl" weight="bold">
+        warm-up 1. Hello World
+      </Text>
       <StatusBadge status="success">正解</StatusBadge>
     </HStack>
   ),

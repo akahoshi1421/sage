@@ -16,7 +16,7 @@ export function QuestionList({ questions, questionHref, currentNumber }: Questio
   const messages = useMessages();
 
   return (
-    <List as="ol" spacing="4">
+    <List as="ol" spacing="xs">
       {questions.map((question) => (
         <ListItem key={question.number} value={question.number}>
           {question.solved && (

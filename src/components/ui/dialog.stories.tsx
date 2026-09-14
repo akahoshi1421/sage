@@ -45,7 +45,7 @@ export const CloseOnly: Story = {
         title="答え"
         trigger={<Button variant="outline">答えを見る</Button>}
       >
-        <VStack align="stretch" gap="3">
+        <VStack align="stretch" gap="md">
           <Text>
             `ref` で作った値は `.value` で読み書きします。テンプレート内では自動的に展開されます。
           </Text>
@@ -113,7 +113,7 @@ export const LongContent: Story = {
         scrollBehavior="inside"
         trigger={<Button variant="outline">答えを見る</Button>}
       >
-        <VStack align="stretch" gap="3">
+        <VStack align="stretch" gap="md">
           {paragraphs(12)}
         </VStack>
       </Dialog>

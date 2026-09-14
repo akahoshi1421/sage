@@ -27,10 +27,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const questionList = (titles: string[]) => (
-  <Box as="ol" pl="6">
+  <Box as="ol" pl="lg">
     {titles.map((title) => (
-      <Box key={title} as="li" py="1">
-        <Text as="span" textStyle="dns-16N-130">
+      <Box key={title} as="li" py="xs">
+        <Text as="span" size="sm">
           {title}
         </Text>
       </Box>
@@ -58,7 +58,7 @@ export const FromStart: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
     return (
-      <Flex p="4">
+      <Flex p="md">
         <Drawer
           {...args}
           open={open}
@@ -79,7 +79,7 @@ export const FromEnd: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
     return (
-      <Flex p="4" justify="flex-end">
+      <Flex p="md" justify="flex-end">
         <Drawer
           {...args}
           open={open}
@@ -100,7 +100,7 @@ export const IconOnlyTrigger: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
     return (
-      <Flex p="4">
+      <Flex p="md">
         <Drawer
           {...args}
           open={open}

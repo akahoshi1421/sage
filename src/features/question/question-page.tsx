@@ -84,8 +84,8 @@ export function QuestionPage({
   };
 
   const questionPane = (
-    <Box h="100%" overflowY="auto" px={{ base: "4", md: "6" }} py="6">
-      <VStack align="stretch" gap="6">
+    <Box h="100%" overflowY="auto" px={{ base: "md", md: "lg" }} py="lg">
+      <VStack align="stretch" gap="lg">
         <Heading level="h1" size="24">
           {messages.difficulty[question.difficulty]} {question.number} {question.title}
         </Heading>
@@ -119,10 +119,10 @@ export function QuestionPage({
           label={question.templateFileName}
         />
       </Box>
-      <Box position="sticky" bottom="0">
+      <Box position="sticky" bottom="none">
         <Divider />
-        <Flex justify="flex-end" align="center" gap="4" px="4" py="3">
-          <Text as="span" color="muted" textStyle="dns-14N-130">
+        <Flex justify="flex-end" align="center" gap="md" px="md" py="md">
+          <Text as="span" color="muted" size="xs">
             {question.templateFileName}
           </Text>
           <Button onClick={onSubmit} disabled={submitting}>
@@ -205,7 +205,7 @@ export function QuestionPage({
         footer={resultFooter}
       >
         {result && (
-          <VStack align="start" gap="3">
+          <VStack align="start" gap="md">
             <StatusBadge status={verdictStatus[result.verdict]}>
               {verdictLabels[result.verdict]}
             </StatusBadge>

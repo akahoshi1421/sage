@@ -17,6 +17,8 @@ export default defineConfig({
       "jotai",
       "react-markdown",
       "remark-gfm",
+      "shiki",
+      "shiki/engine/javascript",
     ],
   },
 });

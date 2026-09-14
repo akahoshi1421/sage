@@ -22,6 +22,7 @@ export const messages = {
     },
     question: {
       solved: "正解済み",
+      unsolved: "未回答",
       empty: "まだ問題がありません。/sage-create で問題を生成してください。",
       hint: "ヒントを見る",
       showAnswer: "答えを見る",
@@ -66,6 +67,7 @@ export const messages = {
     },
     question: {
       solved: "Solved",
+      unsolved: "Not solved yet",
       empty: "No questions yet. Run /sage-create to generate them.",
       hint: "Show hint",
       showAnswer: "Show answer",

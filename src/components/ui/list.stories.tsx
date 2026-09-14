@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Icon } from "./icon";
+import { Checkmark } from "./checkmark";
 import { HStack, VStack } from "./layout";
 import { Link } from "./link";
 import { List, ListItem } from "./list";
@@ -79,23 +79,17 @@ export const Spacing: Story = {
 };
 
 export const QuestionList: Story = {
-  name: "問題一覧 (正解済みにチェック)",
+  name: "問題一覧 (回答済みはチェック済み、未回答は未チェック)",
   render: () => (
     <List as="ol" spacing="xs">
       <ListItem>
-        <HStack gap="xs" as="span" display="inline-flex" align="center">
-          <Icon name="complete_fill" size="sm" label="正解済み" />
-          <Link href="#">Hello World</Link>
-        </HStack>
+        <Checkmark checked label="正解済み" /> <Link href="#">Hello World</Link>
       </ListItem>
       <ListItem>
-        <HStack gap="xs" as="span" display="inline-flex" align="center">
-          <Icon name="complete_fill" size="sm" label="正解済み" />
-          <Link href="#">Reactive State</Link>
-        </HStack>
+        <Checkmark checked label="正解済み" /> <Link href="#">Reactive State</Link>
       </ListItem>
       <ListItem>
-        <Link href="#">Computed Properties</Link>
+        <Checkmark checked={false} label="未回答" /> <Link href="#">Computed Properties</Link>
       </ListItem>
     </List>
   ),

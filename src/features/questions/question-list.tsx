@@ -1,4 +1,5 @@
-import { Icon, Link, List, ListItem, Text } from "#/components/ui";
+import { Link, List, ListItem } from "#/components/ui";
+import { Checkmark } from "#/components/ui/checkmark";
 import { useMessages } from "#/i18n/locale";
 
 import type { QuestionSummary } from "./types";
@@ -11,7 +12,7 @@ export type QuestionListProps = {
   currentNumber?: number;
 };
 
-/** 問題番号付きの問題一覧。正解済みの問題には印が付く */
+/** 問題番号付きの問題一覧。各問題の先頭に回答済み (チェック済み) / 未回答 (未チェック) の印が付く */
 export function QuestionList({ questions, questionHref, currentNumber }: QuestionListProps) {
   const messages = useMessages();
 
@@ -19,11 +20,10 @@ export function QuestionList({ questions, questionHref, currentNumber }: Questio
     <List as="ol" spacing="xs">
       {questions.map((question) => (
         <ListItem key={question.number} value={question.number}>
-          {question.solved && (
-            <Text as="span" color="success">
-              <Icon name="complete_fill" size="sm" label={messages.question.solved} />{" "}
-            </Text>
-          )}
+          <Checkmark
+            checked={question.solved}
+            label={question.solved ? messages.question.solved : messages.question.unsolved}
+          />{" "}
           <Link
             href={questionHref(question)}
             aria-current={question.number === currentNumber ? "page" : undefined}

@@ -37,7 +37,7 @@ describe("トップページ", () => {
     expect(link).toHaveAttribute("href", "/questions/7-ref");
   });
 
-  it("正解済みの問題にはその印が付き、未回答の問題には付かない", () => {
+  it("正解済みの問題にはチェック済みの印、未回答の問題には未チェックの印が付く", () => {
     // Arrange
     renderTopPage();
     const warmUp = screen.getByRole("region", { name: "warm-up" });
@@ -45,7 +45,9 @@ describe("トップページ", () => {
 
     // Assert
     expect(within(warmUp).getAllByRole("img", { name: "正解済み" })).toHaveLength(2);
+    expect(within(warmUp).queryByRole("img", { name: "未回答" })).not.toBeInTheDocument();
     expect(within(easy).getAllByRole("img", { name: "正解済み" })).toHaveLength(4);
+    expect(within(easy).getAllByRole("img", { name: "未回答" })).toHaveLength(4);
     expect(screen.queryByRole("region", { name: "hard" })).toBeInTheDocument();
   });
 

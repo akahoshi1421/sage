@@ -81,10 +81,10 @@ npm run storybook -- --port 6006`,
 export const Languages: Story = {
   name: "言語ごとの色分け",
   render: () => (
-    <VStack align="stretch" gap="6">
+    <VStack align="stretch" gap="lg">
       {samples.map((sample) => (
-        <VStack key={sample.language} align="stretch" gap="2">
-          <Text textStyle="std-16B-170">{sample.label}</Text>
+        <VStack key={sample.language} align="stretch" gap="sm">
+          <Text weight="bold">{sample.label}</Text>
           <CodeBlock code={sample.code} language={sample.language} />
         </VStack>
       ))}

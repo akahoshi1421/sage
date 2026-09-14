@@ -2,6 +2,8 @@ export { Accordion, type AccordionItem, type AccordionProps } from "./accordion"
 export { AppFooter, type AppFooterLink, type AppFooterProps } from "./app-footer";
 export { AppHeader, type AppHeaderProps } from "./app-header";
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
+export { Checkmark, type CheckmarkProps, type CheckmarkSize } from "./checkmark";
+export { CodeBlock, type CodeBlockProps } from "./code-block";
 export { CodeEditor, type CodeEditorProps, languageFromFilename } from "./code-editor";
 export {
   Dialog,

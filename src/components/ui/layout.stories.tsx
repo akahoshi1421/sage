@@ -49,6 +49,29 @@ export const StackStory: Story = {
   ),
 };
 
+export const SpacingScaleStory: Story = {
+  name: "余白スケール",
+  render: () => (
+    <VStack align="start" gap="md">
+      <style>{demoStyle}</style>
+      {(["none", "xs", "sm", "md", "lg", "xl"] as const).map((space) => (
+        <HStack key={space} gap="md" align="center">
+          <Box w="4rem">
+            <Text size="sm" weight="bold">
+              {space}
+            </Text>
+          </Box>
+          <HStack gap={space}>
+            <Block>A</Block>
+            <Block>B</Block>
+            <Block>C</Block>
+          </HStack>
+        </HStack>
+      ))}
+    </VStack>
+  ),
+};
+
 export const FlexStory: Story = {
   name: "Flex + Spacer",
   render: () => (

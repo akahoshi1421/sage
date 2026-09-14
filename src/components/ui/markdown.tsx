@@ -1,10 +1,11 @@
 import { chakra, defineRecipe } from "@chakra-ui/react";
-import type { ComponentPropsWithoutRef } from "react";
-import ReactMarkdown, { type Components } from "react-markdown";
+import { type ComponentPropsWithoutRef, isValidElement, type ReactNode } from "react";
+import ReactMarkdown, { type Components, type ExtraProps } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { focusVisibleTextStyle } from "#/theme/focus";
 
+import { CodeBlock } from "./code-block";
 import { Icon } from "./icon";
 
 /**
@@ -43,7 +44,8 @@ const markdownRecipe = defineRecipe({
     "& li > ul, & li > ol": { my: "1" },
     "& li > input[type=checkbox]": { me: "2" },
     "& strong": { fontWeight: 700 },
-    "& code": {
+    // インラインコード (フェンス付きのコードブロックは CodeBlock が描画する)
+    "& :not(pre) > code": {
       fontFamily: "mono",
       fontSize: "0.875em",
       bg: "solidGray.50",
@@ -51,15 +53,7 @@ const markdownRecipe = defineRecipe({
       px: "1",
       py: "0.5",
     },
-    "& pre": {
-      my: "4",
-      p: "4",
-      bg: "solidGray.50",
-      rounded: "8",
-      overflowX: "auto",
-      textStyle: "mono-14N-150",
-      "& code": { bg: "transparent", rounded: 0, p: 0, fontSize: "inherit" },
-    },
+    "& pre": { my: "4" },
     "& blockquote": {
       my: "4",
       ps: "4",
@@ -114,9 +108,22 @@ const MarkdownLink = ({ href, children, ...rest }: AnchorProps) => {
   );
 };
 
+type PreProps = ComponentPropsWithoutRef<"pre"> & ExtraProps;
+type CodeElementProps = { className?: string; children?: ReactNode };
+
+/** フェンス付きコードブロック (`<pre><code class="language-xxx">`) を色分け付きの CodeBlock で描画する */
+const MarkdownPre = ({ children, node: _node, ...rest }: PreProps) => {
+  if (isValidElement<CodeElementProps>(children) && typeof children.props.children === "string") {
+    const language = /language-([\w+#.-]+)/.exec(children.props.className ?? "")?.[1];
+    return <CodeBlock code={children.props.children.replace(/\n$/, "")} language={language} />;
+  }
+  return <pre {...rest}>{children}</pre>;
+};
+
 const components: Components = {
   // react-markdown が渡す `node` は DOM に流さない
   a: ({ node: _node, ...props }) => <MarkdownLink {...props} />,
+  pre: MarkdownPre,
 };
 
 export type MarkdownProps = {

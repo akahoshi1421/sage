@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { render, screen } from "#/test/render";
+import { render, screen, waitFor } from "#/test/render";
 
 import { Markdown } from "./markdown";
+
+/** 色分けされたトークン (shiki が付ける色付きの span) */
+const coloredTokens = (element: Element) => element.querySelectorAll('span[style*="color"]');
 
 describe("Markdown の表示", () => {
   it("見出しが見出しとして読める", () => {
@@ -17,16 +20,48 @@ describe("Markdown の表示", () => {
     expect(screen.getByRole("heading", { level: 2, name: "要件" })).toBeInTheDocument();
   });
 
-  it("コードブロックの内容がそのまま表示される", () => {
+  it("コードブロックは言語に応じて色分けされ、内容はそのまま読める", async () => {
     // Arrange
     const markdown = "```ts\nconst a = 1;\n```";
 
     // Act
-    render(<Markdown>{markdown}</Markdown>);
+    const { container } = render(<Markdown>{markdown}</Markdown>);
+    const pre = container.querySelector("pre") as HTMLElement;
 
     // Assert
-    expect(screen.getByText("const a = 1;")).toBeInTheDocument();
+    expect(pre).toHaveTextContent("const a = 1;");
+    await waitFor(() => expect(coloredTokens(pre).length).toBeGreaterThan(0), { timeout: 10_000 });
+    expect(pre).toHaveTextContent("const a = 1;");
+  }, 15_000);
+
+  it("対応していない言語のコードブロックもそのまま読める", async () => {
+    // Arrange
+    const markdown = "```not-a-language\nhello world\n```";
+
+    // Act
+    const { container } = render(<Markdown>{markdown}</Markdown>);
+    const pre = container.querySelector("pre") as HTMLElement;
+
+    // Assert
+    await waitFor(() => expect(pre).toHaveTextContent("hello world"));
+    expect(coloredTokens(pre)).toHaveLength(0);
   });
+
+  it("インラインコードは色分けの対象にならない", async () => {
+    // Arrange
+    const markdown = "`inline` と\n\n```ts\nconst a = 1;\n```";
+
+    // Act
+    const { container } = render(<Markdown>{markdown}</Markdown>);
+    const pre = container.querySelector("pre") as HTMLElement;
+
+    // Assert
+    await waitFor(() => expect(coloredTokens(pre).length).toBeGreaterThan(0), { timeout: 10_000 });
+    const inline = screen.getByText("inline");
+    expect(inline.tagName).toBe("CODE");
+    expect(inline.closest("pre")).toBeNull();
+    expect(coloredTokens(inline)).toHaveLength(0);
+  }, 15_000);
 
   it("外部リンクは新しいタブで開き、その旨が伝わる", () => {
     // Arrange

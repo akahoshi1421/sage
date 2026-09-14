@@ -114,3 +114,70 @@ export const Elements: Story = {
   name: "全要素",
   args: { children: elements },
 };
+
+const codeBlocks = `## コードブロックの色分け
+
+言語を指定したフェンス付きコードブロックは、Monaco Editor と同じ配色 (VS Code Light+) で色分けされます。
+インラインコード (\`ref\`, \`.value\`) は色分けの対象になりません。
+
+### TypeScript
+
+\`\`\`ts
+import { ref } from "vue";
+
+export function useCounter(initial = 0) {
+  const count = ref(initial);
+  const increment = () => {
+    count.value++;
+  };
+  return { count, increment };
+}
+\`\`\`
+
+### Vue
+
+\`\`\`vue
+<script setup lang="ts">
+import { ref } from "vue";
+
+const count = ref(0);
+</script>
+
+<template>
+  <button @click="count++">{{ count }}</button>
+</template>
+\`\`\`
+
+### Python
+
+\`\`\`python
+def fizzbuzz(n: int) -> str:
+    if n % 15 == 0:
+        return "FizzBuzz"
+    return str(n)
+\`\`\`
+
+### シェル
+
+\`\`\`sh
+npm ci
+npm run dev -- --port 3000
+\`\`\`
+
+### 言語の指定なし
+
+\`\`\`
+色分けされないコードブロックです。
+\`\`\`
+
+### 対応していない言語
+
+\`\`\`not-a-language
+色分けされずにそのまま表示されます。
+\`\`\`
+`;
+
+export const CodeBlocks: Story = {
+  name: "コードブロック (シンタックスハイライト)",
+  args: { children: codeBlocks },
+};

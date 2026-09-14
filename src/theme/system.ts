@@ -9,6 +9,7 @@ import {
 
 import { dadsTokens } from "./dads-tokens";
 import { accordionSlotRecipe } from "./recipes/accordion";
+import { checkmarkRecipe } from "./recipes/checkmark";
 import { dialogSlotRecipe } from "./recipes/dialog";
 import { drawerSlotRecipe } from "./recipes/drawer";
 import { splitterSlotRecipe } from "./recipes/splitter";
@@ -166,6 +167,9 @@ const config = defineConfig({
     tokens,
     semanticTokens,
     textStyles,
+    recipes: {
+      checkmark: checkmarkRecipe,
+    },
     slotRecipes: {
       accordion: accordionSlotRecipe,
       dialog: dialogSlotRecipe,

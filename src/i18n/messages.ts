@@ -6,6 +6,7 @@ export const messages = {
     nav: {
       menu: "メニュー",
       close: "閉じる",
+      cancel: "キャンセル",
       questionList: "問題一覧",
       backToTop: "トップへ戻る",
       github: "GitHub",
@@ -30,6 +31,11 @@ export const messages = {
       next: "次の問題へ",
       save: "保存",
       saved: "保存しました",
+      reset: "リセット",
+      resetConfirmTitle: "回答をリセットしますか？",
+      resetConfirm: "リセットする",
+      resetConfirmBody: (answerFile: string, templateFile: string) =>
+        `${answerFile} の内容を ${templateFile} の内容に戻します。この操作は取り消せません。`,
     },
     result: {
       title: "採点結果",
@@ -44,6 +50,7 @@ export const messages = {
     nav: {
       menu: "Menu",
       close: "Close",
+      cancel: "Cancel",
       questionList: "Questions",
       backToTop: "Back to top",
       github: "GitHub",
@@ -68,6 +75,11 @@ export const messages = {
       next: "Next question",
       save: "Save",
       saved: "Saved",
+      reset: "Reset",
+      resetConfirmTitle: "Reset your answer?",
+      resetConfirm: "Reset",
+      resetConfirmBody: (answerFile: string, templateFile: string) =>
+        `This replaces the contents of ${answerFile} with ${templateFile}. This cannot be undone.`,
     },
     result: {
       title: "Result",

@@ -22,10 +22,14 @@ export type QuestionDetail = QuestionSummary & {
   hint: string;
   /** ANSWER.md の内容 */
   answer: string;
-  /** 回答を書き込むファイル名 (例: `template.ts`) */
+  /** テンプレートのファイル名 (例: `template.ts`)。リセット時の戻し先 */
   templateFileName: string;
-  /** 回答ファイルの現在の内容 */
+  /** テンプレートの内容 */
   templateCode: string;
+  /** ユーザが回答を書き込むファイル名 (例: `answer.ts`)。初期値はテンプレートと同じ */
+  answerFileName: string;
+  /** 回答ファイルの現在の内容 */
+  answerCode: string;
 };
 
 /** 採点結果の判定 */

@@ -24,7 +24,7 @@ const comments: Record<Verdict, string> = {
 
 /** 回答ボタンを押すと擬似的に採点して結果を返すデモ */
 function QuestionPageDemo({ verdict }: { verdict: Verdict }) {
-  const [code, setCode] = useState(questionDetailFixture.templateCode);
+  const [code, setCode] = useState(questionDetailFixture.answerCode);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<MarkResult | null>(null);
 
@@ -44,6 +44,7 @@ function QuestionPageDemo({ verdict }: { verdict: Verdict }) {
       code={code}
       onCodeChange={setCode}
       onSave={() => {}}
+      onReset={() => setCode(questionDetailFixture.templateCode)}
       onSubmit={submit}
       submitting={submitting}
       result={result}
@@ -75,9 +76,10 @@ export const ResultOpen: Story = {
       question={questionDetailFixture}
       questions={questionsFixture}
       questionHref={questionHref}
-      code={questionDetailFixture.templateCode}
+      code={questionDetailFixture.answerCode}
       onCodeChange={() => {}}
       onSave={() => {}}
+      onReset={() => {}}
       onSubmit={() => {}}
       result={{ verdict: "correct", comment: comments.correct }}
       onResultClose={() => {}}
@@ -93,9 +95,10 @@ export const Submitting: Story = {
       question={questionDetailFixture}
       questions={questionsFixture}
       questionHref={questionHref}
-      code={questionDetailFixture.templateCode}
+      code={questionDetailFixture.answerCode}
       onCodeChange={() => {}}
       onSave={() => {}}
+      onReset={() => {}}
       onSubmit={() => {}}
       submitting
       result={null}

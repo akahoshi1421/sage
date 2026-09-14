@@ -145,4 +145,15 @@ import { ref } from "vue";
   <button>0</button>
 </template>
 `,
+  answerFileName: "answer.vue",
+  answerCode: `<script setup lang="ts">
+import { ref } from "vue";
+
+const count = ref(0);
+</script>
+
+<template>
+  <button>{{ count }}</button>
+</template>
+`,
 };

@@ -41,6 +41,8 @@ export type QuestionPageProps = {
   onCodeChange: (code: string) => void;
   /** Cmd/Ctrl+S で呼ばれる */
   onSave: (code: string) => void;
+  /** 回答ファイルをテンプレートの内容に戻す (確認ダイアログで確定したときに呼ばれる) */
+  onReset: () => void;
   /** 「回答」ボタンで呼ばれる (採点の開始) */
   onSubmit: () => void;
   /** 採点中 */
@@ -66,6 +68,7 @@ export function QuestionPage({
   code,
   onCodeChange,
   onSave,
+  onReset,
   onSubmit,
   submitting = false,
   result,
@@ -75,6 +78,7 @@ export function QuestionPage({
   const messages = useMessages();
   const [menuOpen, setMenuOpen] = useState(false);
   const [answerOpen, setAnswerOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const groups = groupQuestionsByDifficulty(questions);
 
   const verdictLabels: Record<Verdict, string> = {
@@ -113,21 +117,26 @@ export function QuestionPage({
       <Box flex="1" minH="0">
         <CodeEditor
           value={code}
-          language={languageFromFilename(question.templateFileName)}
+          language={languageFromFilename(question.answerFileName)}
           onChange={onCodeChange}
           onSave={onSave}
-          label={question.templateFileName}
+          label={question.answerFileName}
         />
       </Box>
       <Box position="sticky" bottom="none">
         <Divider />
-        <Flex justify="flex-end" align="center" gap="md" px="md" py="md">
-          <Text as="span" color="muted" size="xs">
-            {question.templateFileName}
-          </Text>
-          <Button onClick={onSubmit} disabled={submitting}>
-            {submitting ? messages.question.submitting : messages.question.submit}
+        <Flex justify="space-between" align="center" gap="md" px="md" py="md">
+          <Button variant="text" size="sm" onClick={() => setResetOpen(true)}>
+            {messages.question.reset}
           </Button>
+          <Flex align="center" gap="md">
+            <Text as="span" color="muted" size="xs">
+              {question.answerFileName}
+            </Text>
+            <Button onClick={onSubmit} disabled={submitting}>
+              {submitting ? messages.question.submitting : messages.question.submit}
+            </Button>
+          </Flex>
         </Flex>
       </Box>
     </Flex>
@@ -194,6 +203,30 @@ export function QuestionPage({
         footer={<DialogCloseButton variant="outline">{messages.nav.close}</DialogCloseButton>}
       >
         <Markdown>{question.answer}</Markdown>
+      </Dialog>
+
+      <Dialog
+        open={resetOpen}
+        onOpenChange={setResetOpen}
+        role="alertdialog"
+        title={messages.question.resetConfirmTitle}
+        footer={
+          <>
+            <DialogCloseButton variant="outline">{messages.nav.cancel}</DialogCloseButton>
+            <Button
+              onClick={() => {
+                onReset();
+                setResetOpen(false);
+              }}
+            >
+              {messages.question.resetConfirm}
+            </Button>
+          </>
+        }
+      >
+        <Text>
+          {messages.question.resetConfirmBody(question.answerFileName, question.templateFileName)}
+        </Text>
       </Dialog>
 
       <Dialog

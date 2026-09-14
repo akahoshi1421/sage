@@ -21,14 +21,16 @@ vi.mock("@monaco-editor/react", async () => {
 
 const renderPage = (overrides: Partial<QuestionPageProps> = {}) => {
   const onSubmit = vi.fn<() => void>();
+  const onReset = vi.fn<() => void>();
   render(
     <QuestionPage
       question={questionDetailFixture}
       questions={questionsFixture}
       questionHref={(question) => `/questions/${question.slug}`}
-      code={questionDetailFixture.templateCode}
+      code={questionDetailFixture.answerCode}
       onCodeChange={() => {}}
       onSave={() => {}}
+      onReset={onReset}
       onSubmit={onSubmit}
       result={null}
       onResultClose={() => {}}
@@ -36,7 +38,7 @@ const renderPage = (overrides: Partial<QuestionPageProps> = {}) => {
       {...overrides}
     />,
   );
-  return { onSubmit };
+  return { onSubmit, onReset };
 };
 
 describe("回答ページ", () => {
@@ -95,6 +97,46 @@ describe("回答ページ", () => {
 
     // Assert
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("リセットを押すと確認され、確定するとテンプレートに戻す処理が呼ばれる", async () => {
+    // Arrange
+    const { onReset } = renderPage();
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "リセット" }));
+    const dialog = await screen.findByRole("alertdialog", { name: "回答をリセットしますか？" });
+
+    // Assert
+    expect(
+      within(dialog).getByText(/answer\.vue の内容を template\.vue の内容に戻します/),
+    ).toBeInTheDocument();
+    expect(onReset).not.toHaveBeenCalled();
+
+    // Act
+    await userEvent.click(within(dialog).getByRole("button", { name: "リセットする" }));
+
+    // Assert
+    expect(onReset).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
+  });
+
+  it("リセットの確認をキャンセルすると何も変わらない", async () => {
+    // Arrange
+    const { onReset } = renderPage();
+    await userEvent.click(screen.getByRole("button", { name: "リセット" }));
+    const dialog = await screen.findByRole("alertdialog", { name: "回答をリセットしますか？" });
+
+    // Act
+    await userEvent.click(within(dialog).getByRole("button", { name: "キャンセル" }));
+
+    // Assert
+    expect(onReset).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
   });
 
   it("採点中は回答ボタンが押せない", () => {

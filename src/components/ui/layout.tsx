@@ -18,12 +18,35 @@ import {
 } from "@chakra-ui/react";
 import type { ComponentPropsWithoutRef, ElementType, FC, Ref } from "react";
 
+import type { Responsive, SpaceScale } from "#/theme/scales";
+
+/** 余白 (gap / padding) を受け付ける props。値はスケール (none / xs / sm / md / lg / xl) から選ぶ */
+type SpacingKey =
+  | "gap"
+  | "rowGap"
+  | "columnGap"
+  | "p"
+  | "px"
+  | "py"
+  | "pt"
+  | "pb"
+  | "pl"
+  | "pr"
+  | "ps"
+  | "pe";
+
+/** マージンを受け付ける props。スケールに加えて中央寄せ用の auto を許可する */
+type MarginKey = "m" | "mx" | "my" | "mt" | "mb" | "ml" | "mr" | "ms" | "me";
+
+/** 位置指定 (position と組み合わせる) の props */
+type InsetKey = "top" | "right" | "bottom" | "left" | "inset" | "insetX" | "insetY";
+
 /**
- * レイアウト部品で使えるスタイル props。
- * 配置・余白・サイズ・スクロール・重なりに関するものだけを許可し、
+ * レイアウト部品で使えるスタイル props のうち、値に制限を付けないもの。
+ * 配置・サイズ・スクロール・重なりに関するものだけを許可し、
  * 色や文字などの見た目はコンポーネントのレシピ側で決める。
  */
-type LayoutStyleKey =
+type FreeLayoutStyleKey =
   | "display"
   | "flex"
   | "flexGrow"
@@ -40,27 +63,6 @@ type LayoutStyleKey =
   | "placeItems"
   | "placeContent"
   | "order"
-  | "gap"
-  | "rowGap"
-  | "columnGap"
-  | "p"
-  | "px"
-  | "py"
-  | "pt"
-  | "pb"
-  | "pl"
-  | "pr"
-  | "ps"
-  | "pe"
-  | "m"
-  | "mx"
-  | "my"
-  | "mt"
-  | "mb"
-  | "ml"
-  | "mr"
-  | "ms"
-  | "me"
   | "w"
   | "h"
   | "minW"
@@ -72,13 +74,6 @@ type LayoutStyleKey =
   | "overflowX"
   | "overflowY"
   | "position"
-  | "top"
-  | "right"
-  | "bottom"
-  | "left"
-  | "inset"
-  | "insetX"
-  | "insetY"
   | "zIndex"
   | "gridTemplateColumns"
   | "gridTemplateRows"
@@ -93,6 +88,15 @@ type LayoutStyleKey =
   | "hideFrom"
   | "textAlign";
 
+/** 余白・マージン・位置は選択肢 (スケール) からだけ選べる */
+type ScaledLayoutProps = {
+  [K in SpacingKey]?: Responsive<SpaceScale>;
+} & {
+  [K in MarginKey]?: Responsive<SpaceScale | "auto">;
+} & {
+  [K in InsetKey]?: Responsive<SpaceScale | "auto">;
+};
+
 type HtmlDivProps = Omit<
   ComponentPropsWithoutRef<"div">,
   "color" | "style" | "translate" | "content"
@@ -106,7 +110,8 @@ type PolymorphicProps = {
   ref?: Ref<HTMLDivElement>;
 };
 
-export type LayoutProps = Pick<ChakraBoxProps, LayoutStyleKey>;
+/** レイアウト部品に共通のスタイル props */
+export type LayoutProps = Pick<ChakraBoxProps, FreeLayoutStyleKey> & ScaledLayoutProps;
 
 export type BoxProps = HtmlDivProps & PolymorphicProps & LayoutProps;
 /** 最小のレイアウト要素 */
@@ -114,24 +119,18 @@ export const Box: FC<BoxProps> = ChakraBox;
 
 export type FlexProps = HtmlDivProps &
   PolymorphicProps &
+  LayoutProps &
   Pick<
     ChakraFlexProps,
-    | LayoutStyleKey
-    | "align"
-    | "justify"
-    | "direction"
-    | "wrap"
-    | "basis"
-    | "grow"
-    | "shrink"
-    | "inline"
+    "align" | "justify" | "direction" | "wrap" | "basis" | "grow" | "shrink" | "inline"
   >;
 /** display: flex の要素 */
 export const Flex: FC<FlexProps> = ChakraFlex;
 
 export type StackProps = HtmlDivProps &
   PolymorphicProps &
-  Pick<ChakraStackProps, LayoutStyleKey | "align" | "justify" | "direction" | "wrap" | "separator">;
+  LayoutProps &
+  Pick<ChakraStackProps, "align" | "justify" | "direction" | "wrap" | "separator">;
 /** 子要素を等間隔に並べる (既定は縦) */
 export const Stack: FC<StackProps> = ChakraStack;
 /** 子要素を横に等間隔に並べる */
@@ -141,9 +140,9 @@ export const VStack: FC<StackProps> = ChakraVStack;
 
 export type GridProps = HtmlDivProps &
   PolymorphicProps &
+  LayoutProps &
   Pick<
     ChakraGridProps,
-    | LayoutStyleKey
     | "templateColumns"
     | "templateRows"
     | "templateAreas"
@@ -159,16 +158,18 @@ export const Grid: FC<GridProps> = ChakraGrid;
 
 export type GridItemProps = HtmlDivProps &
   PolymorphicProps &
+  LayoutProps &
   Pick<
     ChakraGridItemProps,
-    LayoutStyleKey | "area" | "colSpan" | "colStart" | "colEnd" | "rowSpan" | "rowStart" | "rowEnd"
+    "area" | "colSpan" | "colStart" | "colEnd" | "rowSpan" | "rowStart" | "rowEnd"
   >;
 /** Grid の子要素 */
 export const GridItem: FC<GridItemProps> = ChakraGridItem;
 
 export type ContainerProps = HtmlDivProps &
   PolymorphicProps &
-  Pick<ChakraContainerProps, LayoutStyleKey | "centerContent" | "fluid">;
+  LayoutProps &
+  Pick<ChakraContainerProps, "centerContent" | "fluid">;
 /** ページ幅を制限して中央に寄せるコンテナ */
 export const Container: FC<ContainerProps> = ChakraContainer;
 

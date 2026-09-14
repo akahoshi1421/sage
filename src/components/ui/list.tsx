@@ -27,35 +27,35 @@ const listRecipe = defineRecipe({
       none: { listStyleType: "none", paddingInlineStart: 0 },
     },
     spacing: {
-      "0": { "--list-spacing": "0px" },
-      "4": { "--list-spacing": "0.25rem" },
-      "8": { "--list-spacing": "0.5rem" },
-      "12": { "--list-spacing": "0.75rem" },
+      none: { "--list-spacing": "0px" },
+      xs: { "--list-spacing": "0.25rem" },
+      sm: { "--list-spacing": "0.5rem" },
+      md: { "--list-spacing": "1rem" },
     },
   },
   defaultVariants: {
     marker: "disc",
-    spacing: "0",
+    spacing: "none",
   },
 });
 
 const StyledList = chakra("ul", listRecipe);
 
 export type ListMarker = "disc" | "decimal" | "none";
-export type ListSpacing = "0" | "4" | "8" | "12";
+export type ListSpacing = "none" | "xs" | "sm" | "md";
 
 export type ListProps = Omit<ComponentPropsWithoutRef<"ul">, "color" | "style"> & {
   /** ul (箇条書き) か ol (番号付き) か */
   as?: "ul" | "ol";
   /** マーカーの種類 (既定: ul は disc、ol は decimal) */
   marker?: ListMarker;
-  /** 項目間の余白 (px 相当) */
+  /** 項目間の余白 (none / xs / sm / md) */
   spacing?: ListSpacing;
   ref?: Ref<HTMLUListElement>;
 };
 
 /** 箇条書き・番号付きリスト。入れ子にもできる */
-export function List({ as = "ul", marker, spacing = "0", ...rest }: ListProps) {
+export function List({ as = "ul", marker, spacing = "none", ...rest }: ListProps) {
   return (
     <StyledList
       as={as}

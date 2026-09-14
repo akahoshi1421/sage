@@ -9,7 +9,7 @@ const meta = {
   component: StatusBadge,
   tags: ["autodocs"],
   args: {
-    children: "未回答",
+    children: "下書き",
     status: "neutral",
   },
   argTypes: {
@@ -23,10 +23,10 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {};
 
 export const Statuses: Story = {
-  name: "状態",
+  name: "状態 (採点結果など)",
   render: () => (
     <HStack gap="md" wrap="wrap">
-      <StatusBadge status="neutral">未回答</StatusBadge>
+      <StatusBadge status="neutral">下書き</StatusBadge>
       <StatusBadge status="success">正解</StatusBadge>
       <StatusBadge status="warning">惜しい</StatusBadge>
       <StatusBadge status="error">不正解</StatusBadge>

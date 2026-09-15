@@ -52,6 +52,8 @@ export type QuestionPageProps = {
   onResultClose: () => void;
   /** 正解時の「次の問題へ」のリンク先 (最後の問題なら省略) */
   nextQuestionHref?: string;
+  /** 採点などに失敗したときのメッセージ (回答バーの上に表示) */
+  errorMessage?: string | null;
 };
 
 const verdictStatus: Record<Verdict, "success" | "warning" | "error"> = {
@@ -74,6 +76,7 @@ export function QuestionPage({
   result,
   onResultClose,
   nextQuestionHref,
+  errorMessage,
 }: QuestionPageProps) {
   const messages = useMessages();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -125,6 +128,13 @@ export function QuestionPage({
       </Box>
       <Box position="sticky" bottom="none">
         <Divider />
+        {errorMessage && (
+          <Box px="md" pt="sm">
+            <Text role="alert" color="error" size="sm">
+              {errorMessage}
+            </Text>
+          </Box>
+        )}
         <Flex justify="space-between" align="center" gap="md" px="md" py="md">
           <Button variant="text" size="sm" onClick={() => setResetOpen(true)}>
             {messages.question.reset}

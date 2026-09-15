@@ -106,3 +106,22 @@ export const Submitting: Story = {
     />
   ),
 };
+
+export const MarkFailed: Story = {
+  name: "採点に失敗したとき",
+  render: () => (
+    <QuestionPage
+      question={questionDetailFixture}
+      questions={questionsFixture}
+      questionHref={questionHref}
+      code={questionDetailFixture.answerCode}
+      onCodeChange={() => {}}
+      onSave={() => {}}
+      onReset={() => {}}
+      onSubmit={() => {}}
+      result={null}
+      onResultClose={() => {}}
+      errorMessage="採点に失敗しました: 採点コマンド (claude) が終了コード 127 で失敗しました"
+    />
+  ),
+};

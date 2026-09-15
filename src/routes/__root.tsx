@@ -8,7 +8,7 @@ import {
 
 import { Button, Container, Heading, Text, VStack } from "#/components/ui";
 import { UIProvider } from "#/components/ui/provider";
-import { useMessages } from "#/i18n/locale";
+import { useMessages } from "#/i18n/hooks/use-messages";
 import { LocaleProvider } from "#/i18n/locale-provider";
 import { getAppContext } from "#/server/functions";
 

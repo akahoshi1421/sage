@@ -34,18 +34,19 @@ npm ci
 
 ## 開発用スクリプト
 
-| コマンド                                  | 内容                                                                                                   |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `npm run dev`                             | Web 版 (TanStack Start) の開発サーバーを http://localhost:3000 で起動                                  |
-| `npm run build`                           | Web 版のビルド                                                                                         |
-| `npm run storybook`                       | デザインシステム (Storybook) を http://localhost:6006 で起動                                           |
-| `npm run build-storybook`                 | Storybook の静的ビルド                                                                                 |
-| `npm run lint` / `npm run lint:fix`       | oxlint                                                                                                 |
-| `npm run format` / `npm run format:check` | oxfmt                                                                                                  |
-| `npm run typecheck`                       | `tsc --noEmit`                                                                                         |
-| `npm test` / `npm run test:watch`         | vitest                                                                                                 |
-| `npm run generate:tokens`                 | デジタル庁デザイントークンから `src/theme/dads-tokens.ts` を再生成                                     |
-| `npm run generate:icons`                  | `docs/designsystem-assets/icon/svg` (git 管理外) から `src/components/ui/icons/dads-icons.ts` を再生成 |
+| コマンド                                  | 内容                                                                                                     |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Web 版 (TanStack Start) の開発サーバーを http://localhost:3000 で起動                                    |
+| `npm run build`                           | Web 版のビルド                                                                                           |
+| `npm run storybook`                       | デザインシステム (Storybook) を http://localhost:6006 で起動                                             |
+| `npm run build-storybook`                 | Storybook の静的ビルド                                                                                   |
+| `npm run lint` / `npm run lint:fix`       | oxlint                                                                                                   |
+| `npm run format` / `npm run format:check` | oxfmt                                                                                                    |
+| `npm run typecheck`                       | `tsc --noEmit`                                                                                           |
+| `npm test` / `npm run test:watch`         | vitest                                                                                                   |
+| `npm run generate:tokens`                 | デジタル庁デザイントークンから `src/theme/dads-tokens.ts` を再生成                                       |
+| `npm run generate:icons`                  | `docs/designsystem-assets/icon/svg` (git 管理外) から `src/components/ui/icons/dads-icons.ts` を再生成   |
+| `scripts/e2e-create.sh`                   | 公開パッケージとしての導入フロー (`create` → `npm install` → `npm run start`) を通しで確認 (要 `expect`) |
 
 commit 時には lint-staged が oxfmt / oxlint / `tsc --noEmit` を実行します。CI (GitHub Actions) では lint / format check / typecheck / test / Storybook build を実行します。
 

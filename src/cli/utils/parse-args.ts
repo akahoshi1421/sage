@@ -1,7 +1,7 @@
 import { parseArgs } from "node:util";
 
 export type CliCommand =
-  | { name: "create" }
+  | { name: "create"; install: boolean }
   | { name: "start"; port: number; open: boolean }
   | { name: "solved"; number: number }
   | { name: "help" }
@@ -21,6 +21,7 @@ export function parseCliArgs(args: string[]): CliCommand {
     options: {
       port: { type: "string" },
       open: { type: "boolean", default: true },
+      install: { type: "boolean", default: true },
       help: { type: "boolean", short: "h", default: false },
       version: { type: "boolean", short: "v", default: false },
     },
@@ -34,7 +35,7 @@ export function parseCliArgs(args: string[]): CliCommand {
 
   switch (command) {
     case "create":
-      return { name: "create" };
+      return { name: "create", install: values.install };
     case "start": {
       const port = values.port === undefined ? 3000 : Number(values.port);
       if (!Number.isInteger(port) || port <= 0 || port > 65_535) {
@@ -56,7 +57,7 @@ export function parseCliArgs(args: string[]): CliCommand {
 
 export const USAGE = `使い方: sage <command>
 
-  create            対話形式で学習環境 (設定・SKILLS・questions/) を展開する
+  create            対話形式で学習環境 (設定・SKILLS・questions/) を展開する (--no-install で npm install を省く)
   start             Web 版を起動する (--port <番号>, --no-open でブラウザを開かない)
   solved <番号>     問題を正解済みとして記録する (/sage-mark から使う)
 

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { focusVisibleTextStyle } from "#/theme/focus";
 
 import { Icon } from "./icon";
+import { isExternalHref } from "./utils/is-external-href";
 
 const appFooterRecipe = defineSlotRecipe({
   className: "sage-app-footer",
@@ -60,8 +61,6 @@ const FooterInner = withContext<HTMLDivElement, HTMLChakraProps<"div">>("div", "
 const FooterTitle = withContext<HTMLParagraphElement, HTMLChakraProps<"p">>("p", "title");
 const FooterList = withContext<HTMLUListElement, HTMLChakraProps<"ul">>("ul", "list");
 const FooterLink = withContext<HTMLAnchorElement, HTMLChakraProps<"a">>("a", "link");
-
-const isExternalHref = (href: string) => /^https?:\/\//.test(href);
 
 export type AppFooterLink = {
   label: string;

@@ -54,7 +54,7 @@ describe("回答の採点", () => {
     await expect(isSolved(handle.db, 7)).resolves.toBe(false);
   });
 
-  it("設定したエージェントのコマンドで /sage-mark が実行される", async () => {
+  it("Codex では $sage-mark の形式でスキルが呼び出される", async () => {
     // Arrange
     handle = openProgressDb(":memory:");
     const runner = runnerReturning("🟢 正解");
@@ -64,7 +64,7 @@ describe("回答の採点", () => {
 
     // Assert
     expect(runner).toHaveBeenCalledWith(
-      { command: "codex", args: ["exec", "/sage-mark 3"] },
+      { command: "codex", args: ["exec", "$sage-mark 3"] },
       expect.objectContaining({ cwd: "/project" }),
     );
   });

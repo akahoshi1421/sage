@@ -7,14 +7,13 @@ export type MarkCommand = {
   args: string[];
 };
 
-/** 設定されたエージェントで `/sage-mark {番号}` を実行するコマンド */
+/** 設定されたエージェントで sage-mark スキルを実行するコマンド (Claude Code は /名前、Codex は $名前) */
 export function buildMarkCommand(agent: SageConfig["agent"], number: number): MarkCommand {
-  const prompt = `/sage-mark ${number}`;
   switch (agent) {
     case "claude":
-      return { command: "claude", args: ["-p", prompt] };
+      return { command: "claude", args: ["-p", `/sage-mark ${number}`] };
     case "codex":
-      return { command: "codex", args: ["exec", prompt] };
+      return { command: "codex", args: ["exec", `$sage-mark ${number}`] };
   }
 }
 

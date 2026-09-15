@@ -1,0 +1,2 @@
+- `defineProps<{ modelValue: number }>()` と `defineEmits<{ "update:modelValue": [value: number] }>()` を使います
+- `v-model` は `modelValue` props と `update:modelValue` イベントの組み合わせの糖衣構文です

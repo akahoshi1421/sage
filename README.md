@@ -48,6 +48,30 @@ scripts/           トークン・アイコンの生成スクリプト
 docs/              設計ドキュメント
 ```
 
+## 利用者プロジェクトの構成 (Web 版が読む場所)
+
+`npx @akahoshi1421/sage create` で展開されるプロジェクトは次の構成です。開発中は `npm run dev` が `example/` をこの構成のサンプルとして使います (環境変数 `SAGE_ROOT` で切り替え)。
+
+| パス                                      | 内容                                                                          |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| `sage.config.json`                        | `{ "agent": "claude" \| "codex", "locale": "ja" \| "en" }`                    |
+| `questions/README.md`                     | 学習対象の名前 (先頭の `# 見出し`) と概要 (Markdown)                          |
+| `questions/{難易度}/{番号}-{slug}/`       | 難易度は `warm-up` / `easy` / `medium` / `hard` / `extreme`。番号は全体で一意 |
+| 　`QUESTION.md` / `HINT.md` / `ANSWER.md` | 問題文 (先頭の `# 見出し` がタイトル) / ヒント / 答えと解説                   |
+| 　`template.{拡張子}`                     | テンプレート。リセット時の戻し先                                              |
+| 　`answer.{拡張子}`                       | 回答ファイル。無ければテンプレートから作られる                                |
+| `.sage/progress.db`                       | 正解済みの記録 (sqlite)                                                       |
+
+### 採点コマンドの契約
+
+Web 版の「回答」ボタンは、プロジェクトのルートで `claude -p "/sage-mark {番号}"` (codex なら `codex exec "/sage-mark {番号}"`) を実行し、出力の最後にある次の形式の行を判定として読み取ります。
+
+- `🟢 正解 (一言)`
+- `🟡 惜しい (一言)`
+- `🔴 不正解 (一言)`
+
+正解のときは Web 版が `.sage/progress.db` に記録します。
+
 ## デザインシステム
 
 見た目は[デジタル庁デザインシステム](https://design.digital.go.jp/dads/)に準拠しています。

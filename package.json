@@ -13,7 +13,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "cross-env SAGE_ROOT=example vite dev --port 3000",
     "build": "vite build",
     "preview": "vite preview",
     "generate-routes": "tsr generate",

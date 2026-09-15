@@ -55,6 +55,11 @@ export {
   type ListSpacing,
 } from "./list";
 export { Markdown, type MarkdownProps } from "./markdown";
+export {
+  type Navigate,
+  NavigationProvider,
+  type NavigationProviderProps,
+} from "./navigation-provider";
 export { Panel, type PanelProps, type PanelSize, type PanelVariant } from "./panel";
 export { UIProvider, type UIProviderProps } from "./provider";
 export { Splitter, type SplitterProps, type SplitterSize } from "./splitter";

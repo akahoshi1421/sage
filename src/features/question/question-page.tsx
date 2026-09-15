@@ -138,9 +138,7 @@ export function QuestionPage({
     result?.verdict === "correct" && nextQuestionHref ? (
       <>
         <DialogCloseButton variant="outline">{messages.nav.close}</DialogCloseButton>
-        <Button asChild>
-          <a href={nextQuestionHref}>{messages.question.next}</a>
-        </Button>
+        <Button href={nextQuestionHref}>{messages.question.next}</Button>
       </>
     ) : (
       <DialogCloseButton variant="outline">{messages.nav.close}</DialogCloseButton>

@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 
 import { focusVisibleTextStyle } from "#/theme/focus";
 
+import { useInternalNavigation } from "./hooks/use-internal-navigation";
 import { Spacer } from "./layout";
 
 /**
@@ -89,11 +90,20 @@ export function AppHeader({
   sticky = false,
   className,
 }: AppHeaderProps) {
+  const navigateOnClick = useInternalNavigation()(homeHref);
   return (
     <HeaderRoot sticky={sticky} className={className}>
       <HeaderInner>
         {startSlot && <HeaderSlot>{startSlot}</HeaderSlot>}
-        <HeaderTitle>{homeHref ? <a href={homeHref}>{title}</a> : title}</HeaderTitle>
+        <HeaderTitle>
+          {homeHref ? (
+            <a href={homeHref} onClick={navigateOnClick}>
+              {title}
+            </a>
+          ) : (
+            title
+          )}
+        </HeaderTitle>
         <Spacer />
         {endSlot && <HeaderSlot>{endSlot}</HeaderSlot>}
       </HeaderInner>

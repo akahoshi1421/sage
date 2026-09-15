@@ -23,11 +23,11 @@ Write every question, hint, answer and explanation in **{{language}}**.
    - `template.{ext}`: the starting point for the learner, with comments marking where to write. Use the extension of the language being learned (.ts for TypeScript, .py for Python, .vue for Vue, ...).
    - `answer.{ext}`: the file the learner edits. Initially identical to `template.{ext}`.
 5. Make every question solvable and gradable: phrase requirements so they can be verified (for example "a function named X returns Y").
-6. Prepare the web editor (Monaco) for the technology. If it is an npm package, install it with `npm install` when the project does not have it yet, and make `setup` in `sage.editor.js` load its type definitions (see the example in that file; imports then get completion and type checking). For other languages, adjust the editor in `open` when needed (indentation and so on).
+6. Set up the environment for the technology inside this project and prepare the web editor (Monaco) for it. How to set it up depends on the technology: use whatever is normal for it (npm, pip, cargo, downloading a tar.gz with curl, ...). The editor side goes into `sage.editor.js` (see the explanation and examples in that file). What to prepare also depends on the technology: register the type definitions from `node_modules` for an npm package so imports get completion and type checking, provide completions from a list you prepared for a language without a language server, adjust indentation in `open`, and so on.
 7. Finish by listing the generated questions (number, difficulty, title).
 
 ## Constraints
 
-- Do not change the project beyond `questions/`, `sage.editor.js` and installing the target package (`npm install`). Delete any temporary files you created for verification before finishing.
+- Do not change the project beyond `questions/`, `sage.editor.js` and setting up the environment for the technology (adding dependencies and so on). Delete any temporary files you created for verification before finishing.
 - If questions already exist, continue the numbering and avoid duplicate topics.
 - Always specify a language on Markdown code blocks.

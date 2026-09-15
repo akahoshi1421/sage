@@ -11,6 +11,10 @@
  * - project.readFile(path): the content of one file (null when missing)
  *
  * Only URLs can be imported (npm package names cannot be resolved). Errors show up in the browser console.
+ *
+ * sage only hands over Monaco; it assumes nothing about the language or how the technology was installed
+ * (npm / pip / cargo / a tar.gz, ...). Whoever writes this file (the AI agent) decides how to set up the
+ * environment and what to reflect in the editor.
  */
 
 export async function setup({ monaco, project }) {
@@ -31,7 +35,20 @@ export async function setup({ monaco, project }) {
   // });
 }
 
-export function open({ editor, question }) {
-  // Example: use 4-space indentation for Python questions
-  // if (question.language === "python") editor.updateOptions({ tabSize: 4 });
+export async function open({ monaco, editor, project, question }) {
+  // Example: for a language without a language server (Python, ...), offer completions from a list prepared in the project
+  //
+  // if (question.language === "python") {
+  //   editor.updateOptions({ tabSize: 4 });
+  //   const symbols = JSON.parse((await project.readFile("editor/python-symbols.json")) ?? "[]");
+  //   monaco.languages.registerCompletionItemProvider("python", {
+  //     provideCompletionItems: () => ({
+  //       suggestions: symbols.map((label) => ({
+  //         label,
+  //         kind: monaco.languages.CompletionItemKind.Function,
+  //         insertText: label,
+  //       })),
+  //     }),
+  //   });
+  // }
 }

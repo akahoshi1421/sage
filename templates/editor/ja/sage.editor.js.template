@@ -11,6 +11,9 @@
  * - project.readFile(path): 1 ファイルの内容 (無ければ null)
  *
  * import できるのは URL だけ (npm パッケージ名は解決できない)。エラーはブラウザのコンソールに出る。
+ *
+ * sage は Monaco をそのまま渡すだけで、言語や技術 (npm / pip / cargo / tar.gz で入れたものなど) を仮定しない。
+ * 環境をどう用意し、エディタに何を反映するかはこのファイルを書く側 (AI エージェント) が決める。
  */
 
 export async function setup({ monaco, project }) {
@@ -31,7 +34,20 @@ export async function setup({ monaco, project }) {
   // });
 }
 
-export function open({ editor, question }) {
-  // 例: Python の問題ではインデントを 4 にする
-  // if (question.language === "python") editor.updateOptions({ tabSize: 4 });
+export async function open({ monaco, editor, project, question }) {
+  // 例: 言語サーバーの無い言語 (Python など) で、プロジェクト内に用意した一覧から補完を出す
+  //
+  // if (question.language === "python") {
+  //   editor.updateOptions({ tabSize: 4 });
+  //   const symbols = JSON.parse((await project.readFile("editor/python-symbols.json")) ?? "[]");
+  //   monaco.languages.registerCompletionItemProvider("python", {
+  //     provideCompletionItems: () => ({
+  //       suggestions: symbols.map((label) => ({
+  //         label,
+  //         kind: monaco.languages.CompletionItemKind.Function,
+  //         insertText: label,
+  //       })),
+  //     }),
+  //   });
+  // }
 }

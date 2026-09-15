@@ -1,8 +1,9 @@
 import { chakra, defineRecipe } from "@chakra-ui/react";
-import type { ComponentPropsWithoutRef, Ref } from "react";
+import type { ComponentPropsWithoutRef, MouseEvent, Ref } from "react";
 
 import { focusVisibleTextStyle } from "#/theme/focus";
 
+import { useInternalNavigation } from "./hooks/use-internal-navigation";
 import { Icon } from "./icon";
 
 /**
@@ -43,13 +44,19 @@ export function Link({
   target,
   rel,
   externalLabel = "新規タブで開きます",
+  onClick,
   ...rest
 }: LinkProps) {
   const isExternal = target === "_blank";
+  const navigateOnClick = useInternalNavigation()(rest.href, target);
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(event);
+    navigateOnClick?.(event);
+  };
 
   if (asChild) {
     return (
-      <StyledLink asChild target={target} rel={rel} {...rest}>
+      <StyledLink asChild target={target} rel={rel} onClick={onClick} {...rest}>
         {children}
       </StyledLink>
     );
@@ -59,6 +66,7 @@ export function Link({
     <StyledLink
       target={target}
       rel={rel ?? (isExternal ? "noopener noreferrer" : undefined)}
+      onClick={handleClick}
       {...rest}
     >
       {children}

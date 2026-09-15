@@ -22,6 +22,11 @@ Chakra UI v3 のテーマ (`src/theme/`) とレシピで実装しています。
 - `.tsx` にはレンダリングだけを書きます。ロジックは `hooks/` (カスタムフック、1 フック 1 ファイル) と
   `utils/` (純粋関数、1 関数 1 ファイル) に分け、`*.test.ts` で検証します。
 
+## アプリ内リンク
+
+`Link` と `Button` の `href` は、`NavigationProvider` (アプリのルートで TanStack Router に接続) の配下ではページを読み込み直さずに遷移します。
+Storybook などプロバイダが無い場所では通常のリンクとして動きます。
+
 ## 参考
 
 - デジタル庁デザインシステム: https://design.digital.go.jp/dads/

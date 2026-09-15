@@ -3,6 +3,8 @@ import type { ComponentPropsWithoutRef, MouseEvent, Ref } from "react";
 
 import { focusVisibleStyle } from "#/theme/focus";
 
+import { useInternalNavigation } from "./hooks/use-internal-navigation";
+
 /** sm / xs サイズでも 44px 以上のタップ領域を確保するための疑似要素 */
 const tapTargetStyle = {
   content: '""',
@@ -124,6 +126,8 @@ export type ButtonProps = Omit<
   disabled?: boolean;
   /** 子要素 (リンクなど) をボタンとして描画する */
   asChild?: boolean;
+  /** 指定するとリンク (a 要素) として描画する。アプリ内のパスならページを読み込み直さずに遷移する */
+  href?: string;
   ref?: Ref<HTMLButtonElement>;
 };
 
@@ -139,15 +143,27 @@ export function Button({
   type = "button",
   onClick,
   asChild,
+  href,
   ...rest
 }: ButtonProps) {
+  const navigateOnClick = useInternalNavigation()(href);
+  const isLink = href !== undefined;
+  // a 要素として描画するときだけ href を渡す (button の props 型には無いため別に spread する)
+  const linkProps: Record<string, unknown> = isLink ? { href } : {};
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+    navigateOnClick?.(event);
+  };
+
   return (
     <StyledButton
-      type={asChild ? undefined : type}
+      as={isLink ? "a" : undefined}
+      {...linkProps}
+      type={asChild || isLink ? undefined : type}
       variant={variant}
       size={size}
       aria-disabled={disabled || undefined}
-      onClick={disabled ? preventDefault : onClick}
+      onClick={disabled ? preventDefault : handleClick}
       asChild={asChild}
       {...rest}
     />

@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { SageConfig } from "#/server/config";
+import { EDITOR_ADAPTER_FILE } from "#/server/paths";
 
 export type ScaffoldOptions = {
   /** 展開先 (通常はカレントディレクトリ) */
@@ -138,6 +139,12 @@ export async function scaffoldProject(options: ScaffoldOptions): Promise<Scaffol
       ]),
     )),
   ];
+  if ((await readTextIfExists(path.join(root, EDITOR_ADAPTER_FILE))) === null) {
+    files.push([
+      EDITOR_ADAPTER_FILE,
+      await readTemplate(options.packageRoot, "editor", locale, `${EDITOR_ADAPTER_FILE}.template`),
+    ]);
+  }
   await Promise.all(
     files.map(([file, content]) => writeFile(path.join(root, file), content, "utf8")),
   );

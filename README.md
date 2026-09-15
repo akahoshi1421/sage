@@ -69,7 +69,7 @@ src/
   test/            テスト用ヘルパーとフィクスチャ
   cli/             `sage create` / `start` / `solved` の CLI
   server/          問題の読み書き・進捗 DB・採点 (サーバー関数)
-templates/         `sage create` が展開する静的テンプレート (package.json、.gitignore、SKILL.md の ja/en)。`{{key}}` を埋めて書き出す
+templates/         `sage create` が展開する静的テンプレート (package.json、.gitignore、sage.editor.js、SKILL.md の ja/en)。`{{key}}` を埋めて書き出す
 scripts/           トークン・アイコンの生成スクリプト
 docs/              設計ドキュメント
 ```
@@ -87,6 +87,42 @@ docs/              設計ドキュメント
 | 　`template.{拡張子}`                     | テンプレート。リセット時の戻し先                                              |
 | 　`answer.{拡張子}`                       | 回答ファイル。無ければテンプレートから作られる                                |
 | `.sage/progress.db`                       | 正解済みの記録 (sqlite)                                                       |
+| `sage.editor.js`                          | Web エディタ (Monaco) を学習対象に合わせるアダプタ (省略可、下記)             |
+
+### エディタのアダプタ (`sage.editor.js`)
+
+Web 版のエディタは Monaco Editor です。そのままでは学習対象のライブラリ (例: zod) の型を知らないので import の補完や型チェックが効きません。プロジェクトのルートに `sage.editor.js` (ES モジュール) を置くと、ブラウザで読み込まれて Monaco を自由に設定できます。sage は Monaco を渡すだけで、言語や技術の入れ方 (npm / pip / cargo / tar.gz など) を仮定しません。環境の用意とエディタへの反映は利用者側の AI エージェントの仕事で、`sage create` がコメント付きの雛形を書き出し、`/sage-create` が対象の技術に合わせて中身を整えます。
+
+| export                                        | 呼ばれるとき                                                                                       |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `setup({ monaco, project })`                  | Monaco が読み込まれたときに 1 回。型定義の登録や言語の追加                                         |
+| `open({ monaco, editor, project, question })` | 問題を開くたび。エディタ (`IStandaloneCodeEditor`) の設定。`question.language` は Monaco の言語 ID |
+
+`project` はプロジェクト内のファイルを読む API です (プロジェクトの外は読めません)。
+
+- `project.readFiles(dir, suffixes)`: `dir` 以下で名前が `suffixes` のどれかで終わるファイルを `{ 相対パス: 内容 }` で返す
+- `project.readFile(path)`: 1 ファイルの内容 (無ければ `null`)
+
+npm パッケージの型定義を読み込む例。回答ファイルは `file:///questions/...` として開かれるので、`file:///node_modules/...` に置けば Node と同じ解決になります。
+
+```js
+export async function setup({ monaco, project }) {
+  const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
+  for (const [file, content] of Object.entries(files)) {
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `file:///${file}`);
+  }
+  const ts = monaco.languages.typescript;
+  ts.typescriptDefaults.setCompilerOptions({
+    ...ts.typescriptDefaults.getCompilerOptions(),
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeJs,
+    target: ts.ScriptTarget.ES2022,
+    strict: true,
+  });
+}
+```
+
+アダプタの中で `import` できるのは URL だけです (npm パッケージ名は解決できません)。失敗はブラウザのコンソールに出て、エディタ自体はそのまま使えます。
 
 ### 採点コマンドの契約
 

@@ -1,0 +1,54 @@
+/**
+ * Adapter that prepares sage's web editor (Monaco Editor) for the technology being learned.
+ * This file is optional; when present it is loaded in the browser as an ES module.
+ *
+ * - setup({ monaco, project }): called once when Monaco has loaded. Register type definitions or languages here
+ * - open({ monaco, editor, project, question }): called every time a question is opened. Configure the editor (IStandaloneCodeEditor) here
+ *   question is { number, slug, difficulty, title, answerFileName, answerFilePath, language (Monaco language id) }
+ *
+ * project reads files inside the project (nothing outside it):
+ * - project.readFiles(dir, suffixes): files under dir whose name ends with one of suffixes, as { relativePath: content }
+ * - project.readFile(path): the content of one file (null when missing)
+ *
+ * Only URLs can be imported (npm package names cannot be resolved). Errors show up in the browser console.
+ *
+ * sage only hands over Monaco; it assumes nothing about the language or how the technology was installed
+ * (npm / pip / cargo / a tar.gz, ...). Whoever writes this file (the AI agent) decides how to set up the
+ * environment and what to reflect in the editor.
+ */
+
+export async function setup({ monaco, project }) {
+  // Example: load the type definitions of a TypeScript/JavaScript library (zod here) so imports get completion and type checking.
+  // Answer files are opened as file:///questions/..., so placing the types under file:///node_modules/... gives Node-style resolution.
+  //
+  // const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
+  // for (const [file, content] of Object.entries(files)) {
+  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `file:///${file}`);
+  // }
+  // const ts = monaco.languages.typescript;
+  // ts.typescriptDefaults.setCompilerOptions({
+  //   ...ts.typescriptDefaults.getCompilerOptions(),
+  //   module: ts.ModuleKind.ESNext,
+  //   moduleResolution: ts.ModuleResolutionKind.NodeJs,
+  //   target: ts.ScriptTarget.ES2022,
+  //   strict: true,
+  // });
+}
+
+export async function open({ monaco, editor, project, question }) {
+  // Example: for a language without a language server (Python, ...), offer completions from a list prepared in the project
+  //
+  // if (question.language === "python") {
+  //   editor.updateOptions({ tabSize: 4 });
+  //   const symbols = JSON.parse((await project.readFile("editor/python-symbols.json")) ?? "[]");
+  //   monaco.languages.registerCompletionItemProvider("python", {
+  //     provideCompletionItems: () => ({
+  //       suggestions: symbols.map((label) => ({
+  //         label,
+  //         kind: monaco.languages.CompletionItemKind.Function,
+  //         insertText: label,
+  //       })),
+  //     }),
+  //   });
+  // }
+}

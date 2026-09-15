@@ -146,6 +146,7 @@ import { ref } from "vue";
 </template>
 `,
   answerFileName: "answer.vue",
+  answerFilePath: "questions/easy/7-ref/answer.vue",
   answerCode: `<script setup lang="ts">
 import { ref } from "vue";
 

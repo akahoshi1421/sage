@@ -16,7 +16,7 @@ async function main(): Promise<number> {
       return 0;
     case "create": {
       const { runCreate } = await import("./create/run-create");
-      return runCreate(pkg);
+      return runCreate(pkg, { install: command.install });
     }
     case "start": {
       const { runStart } = await import("./start/run-start");

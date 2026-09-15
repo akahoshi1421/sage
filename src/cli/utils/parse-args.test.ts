@@ -9,6 +9,11 @@ describe("CLI の引数", () => {
     expect(parseCliArgs(["start", "--help"])).toEqual({ name: "help" });
   });
 
+  it("create は既定で npm install まで行い、--no-install で省ける", () => {
+    expect(parseCliArgs(["create"])).toEqual({ name: "create", install: true });
+    expect(parseCliArgs(["create", "--no-install"])).toEqual({ name: "create", install: false });
+  });
+
   it("start は既定でポート 3000 でブラウザを開き、--port と --no-open で変えられる", () => {
     expect(parseCliArgs(["start"])).toEqual({ name: "start", port: 3000, open: true });
     expect(parseCliArgs(["start", "--port", "3100", "--no-open"])).toEqual({

@@ -16,7 +16,7 @@ const exists = (file: string) =>
   );
 
 /** `sage create`: 対話で設定を決め、カレントディレクトリに学習環境を展開する */
-export async function runCreate(pkg: PackageInfo): Promise<number> {
+export async function runCreate(pkg: PackageInfo, options: { install: boolean }): Promise<number> {
   const root = process.cwd();
   const paths = resolveProjectPaths(root);
   const answers = await askCreateAnswers({ alreadyConfigured: await exists(paths.configFile) });
@@ -30,14 +30,18 @@ export async function runCreate(pkg: PackageInfo): Promise<number> {
   });
   log.success(`Wrote ${result.files.length} files (${result.files.join(", ")})`);
 
-  const progress = spinner();
-  progress.start("Installing sage into this project (npm install)");
-  try {
-    await installPackage(root);
-    progress.stop("Installed.");
-  } catch (error) {
-    progress.stop("npm install failed. Run `npm install` yourself and then `npm run start`.");
-    log.error(error instanceof Error ? error.message : String(error));
+  if (options.install) {
+    const progress = spinner();
+    progress.start("Installing sage into this project (npm install)");
+    try {
+      await installPackage(root);
+      progress.stop("Installed.");
+    } catch (error) {
+      progress.stop("npm install failed. Run `npm install` yourself and then `npm run start`.");
+      log.error(error instanceof Error ? error.message : String(error));
+    }
+  } else {
+    log.info("Skipped npm install (--no-install). Run `npm install` before `npm run start`.");
   }
 
   showNextSteps(answers, result.skillsDir);

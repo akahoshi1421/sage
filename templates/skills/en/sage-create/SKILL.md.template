@@ -1,0 +1,32 @@
+---
+name: sage-create
+description: Generate a type-challenges style question set under questions/ for learning a given technology, library or framework. Use as "{{call}} <technology>".
+argument-hint: <technology>
+disable-model-invocation: true
+---
+
+# {{call}} — generate a question set
+
+Target technology: {{arguments}}
+
+Write every question, hint, answer and explanation in **{{language}}**.
+
+## Steps
+
+1. Research the target technology. Use the official documentation and other reliable sources to map out the core concepts, APIs, typical usage and common pitfalls. If the project already depends on it (for example in package.json), note the version.
+2. Order the core concepts in a sensible learning sequence and assign difficulties (`warm-up` → `easy` → `medium` → `hard` → `extreme`). A gentle learning curve needs fewer questions, a steep one needs more. It is fine to leave some difficulties empty.
+3. Write `questions/README.md`: start with a `# {technology}` heading, then an overview of what will be learned and what each difficulty covers.
+4. Create `questions/{difficulty}/{number}-{slug}/` for each question. Numbers start at 1 and are unique across all difficulties, smallest numbers in warm-up. The slug is short, lowercase letters and hyphens only. Each directory contains:
+   - `QUESTION.md`: a `# {title}` heading, the task, and a bullet list of objectively checkable requirements. Add input/output examples when useful.
+   - `HINT.md`: 2-4 hints that do not give away the answer.
+   - `ANSWER.md`: a reference solution (fenced code block with a language) and an explanation of why it works.
+   - `template.{ext}`: the starting point for the learner, with comments marking where to write. Use the extension of the language being learned (.ts for TypeScript, .py for Python, .vue for Vue, ...).
+   - `answer.{ext}`: the file the learner edits. Initially identical to `template.{ext}`.
+5. Make every question solvable and gradable: phrase requirements so they can be verified (for example "a function named X returns Y").
+6. Finish by listing the generated questions (number, difficulty, title).
+
+## Constraints
+
+- Do not modify anything outside `questions/`. Delete any temporary files you created for verification before finishing.
+- If questions already exist, continue the numbering and avoid duplicate topics.
+- Always specify a language on Markdown code blocks.

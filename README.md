@@ -67,6 +67,9 @@ src/
   i18n/            Web 版 UI の文言 (ja / en)
   routes/          TanStack Start のルート
   test/            テスト用ヘルパーとフィクスチャ
+  cli/             `sage create` / `start` / `solved` の CLI
+  server/          問題の読み書き・進捗 DB・採点 (サーバー関数)
+templates/         `sage create` が展開する静的テンプレート (package.json、.gitignore、SKILL.md の ja/en)。`{{key}}` を埋めて書き出す
 scripts/           トークン・アイコンの生成スクリプト
 docs/              設計ドキュメント
 ```

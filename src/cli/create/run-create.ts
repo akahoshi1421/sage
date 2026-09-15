@@ -27,6 +27,7 @@ export async function runCreate(pkg: PackageInfo, options: { install: boolean })
     ...answers,
     packageName: pkg.name,
     packageVersion: pkg.version,
+    packageRoot: pkg.root,
   });
   log.success(`Wrote ${result.files.length} files (${result.files.join(", ")})`);
 

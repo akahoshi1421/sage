@@ -19,6 +19,5 @@ docs/designsystem-assets/
 # Claude Code agent worktrees
 .claude/worktrees/
 
-# example project state (progress db and answer files)
+# example project state (progress db)
 example/.sage/
-example/questions/**/answer.*

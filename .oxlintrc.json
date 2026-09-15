@@ -69,6 +69,7 @@
     ".tanstack/**",
     "storybook-static/**",
     "docs/**",
+    ".claude/**",
     "src/routeTree.gen.ts"
   ]
 }

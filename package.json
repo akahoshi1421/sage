@@ -1,20 +1,30 @@
 {
   "name": "@akahoshi1421/sage",
   "version": "0.0.0",
-  "private": true,
   "description": "A type-challenges style framework for learning any library or technology with AI coding agents",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/akahoshi1421/sage.git"
   },
+  "bin": {
+    "sage": "./bin/sage.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
   "type": "module",
   "imports": {
     "#/*": "./src/*"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "cross-env SAGE_ROOT=example vite dev --port 3000",
-    "build": "vite build",
+    "build": "vite build && tsdown",
     "preview": "vite preview",
     "generate-routes": "tsr generate",
     "generate:tokens": "node scripts/generate-dads-tokens.ts && oxfmt src/theme/dads-tokens.ts",
@@ -29,7 +39,10 @@
     "build-storybook": "storybook build",
     "typegen": "chakra typegen ./src/theme/system.ts",
     "prepare": "husky && npm run typegen",
-    "generate:icons": "node scripts/generate-icons.ts && oxfmt src/components/ui/icons/dads-icons.ts"
+    "generate:icons": "node scripts/generate-icons.ts && oxfmt src/components/ui/icons/dads-icons.ts",
+    "build:web": "vite build",
+    "build:cli": "tsdown",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.37.0",
@@ -41,11 +54,13 @@
     "@tanstack/react-start": "^1.168.53",
     "drizzle-orm": "^0.45.2",
     "jotai": "^2.20.3",
+    "open": "^11.0.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "shiki": "^4.4.3",
+    "srvx": "^1.0.5",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -71,6 +86,7 @@
     "oxfmt": "^0.67.0",
     "oxlint": "^1.82.0",
     "storybook": "^10.6.0",
+    "tsdown": "^0.23.0",
     "typescript": "^6.0.3",
     "vite": "^8.3.0",
     "vitest": "^4.1.11"

@@ -44,6 +44,12 @@ export const messages = {
       close: "惜しい",
       incorrect: "不正解",
     },
+    error: {
+      markFailed: "採点に失敗しました",
+      notFoundTitle: "ページが見つかりません",
+      notFoundBody: "お探しの問題は存在しないか、移動した可能性があります。",
+      unexpectedTitle: "エラーが発生しました",
+    },
   },
   en: {
     appName: "sage",
@@ -88,6 +94,12 @@ export const messages = {
       correct: "Correct",
       close: "Almost",
       incorrect: "Incorrect",
+    },
+    error: {
+      markFailed: "Grading failed",
+      notFoundTitle: "Page not found",
+      notFoundBody: "The question you are looking for does not exist or has moved.",
+      unexpectedTitle: "Something went wrong",
     },
   },
 } as const;

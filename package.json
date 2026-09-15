@@ -13,7 +13,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "cross-env SAGE_ROOT=example vite dev --port 3000",
     "build": "vite build",
     "preview": "vite preview",
     "generate-routes": "tsr generate",
@@ -45,7 +45,8 @@
     "react-dom": "^19.3.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "shiki": "^4.4.3"
+    "shiki": "^4.4.3",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@chakra-ui/cli": "^3.37.0",
@@ -61,6 +62,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "cross-env": "^10.1.0",
     "drizzle-kit": "^0.31.10",
     "eslint-plugin-storybook": "^10.6.0",
     "husky": "^9.1.7",

@@ -1,0 +1,2 @@
+- `computed(() => ...)` の中で `items.value` を使うと、`items` が変わるたびに再計算されます
+- 合計は `reduce` で求められます

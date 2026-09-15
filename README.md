@@ -34,6 +34,13 @@ npm ci
 
 commit 時には lint-staged が oxfmt / oxlint / `tsc --noEmit` を実行します。CI (GitHub Actions) では lint / format check / typecheck / test / Storybook build を実行します。
 
+## コード規約
+
+- `.tsx` (コンポーネント・ルート) にはレンダリングだけを書き、ロジックは同じ機能ディレクトリの `hooks/` (カスタムフック、1 フック 1 ファイル) と `utils/` (純粋関数、1 関数 1 ファイル) に分けます
+- アプリ本体は `src/components/ui` の部品だけを使い、`@chakra-ui/react` を直接 import しません
+- テストは目的駆動 (「ユーザがこの操作をした結果こうなる」) で書きます。`*.test.tsx` は jsdom、`*.test.ts` は Node で実行されます
+- コミットは 1 小タスクごと、英語で `add:` / `fix:` などのプレフィックスを付けます
+
 ## ディレクトリ構成
 
 ```

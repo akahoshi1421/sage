@@ -13,17 +13,21 @@ export function useQuestionEditor(question: QuestionDetail) {
   const router = useRouter();
   const messages = useMessages();
   const [code, setCode] = useState(question.answerCode);
+  /** 最後にファイルへ保存した内容。エディタの内容と違えば未保存 */
+  const [savedCode, setSavedCode] = useState(question.answerCode);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<MarkResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const save = async (nextCode: string) => {
     await saveAnswerFn({ data: { slug: question.slug, code: nextCode } });
+    setSavedCode(nextCode);
   };
 
   const reset = async () => {
     const restored = await resetAnswerFn({ data: question.slug });
     setCode(restored.code);
+    setSavedCode(restored.code);
   };
 
   const submit = async () => {
@@ -52,6 +56,7 @@ export function useQuestionEditor(question: QuestionDetail) {
   return {
     code,
     setCode,
+    dirty: code !== savedCode,
     submitting,
     result,
     errorMessage,

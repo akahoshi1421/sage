@@ -53,6 +53,24 @@ describe("回答ページ", () => {
     expect(screen.getByText(/を使ってカウンターを作ってください/)).toBeInTheDocument();
   });
 
+  it("未保存の変更があるとファイル名の横に印が出て、保存の仕方が分かる", () => {
+    // Arrange
+    renderPage({ dirty: true });
+
+    // Assert
+    const mark = screen.getByRole("img", { name: /未保存の変更があります/ });
+    expect(mark).toHaveAttribute("title", expect.stringContaining("⌘S"));
+    expect(screen.getByText("answer.vue")).toBeInTheDocument();
+  });
+
+  it("保存済みならファイル名の横に印は出ない", () => {
+    // Arrange
+    renderPage();
+
+    // Assert
+    expect(screen.queryByRole("img", { name: /未保存の変更があります/ })).not.toBeInTheDocument();
+  });
+
   it("ヒントは最初は隠れていて、「ヒントを見る」を開くと読める", async () => {
     // Arrange
     renderPage();

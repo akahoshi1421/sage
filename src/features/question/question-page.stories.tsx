@@ -25,10 +25,12 @@ const comments: Record<Verdict, string> = {
 /** 回答ボタンを押すと擬似的に採点して結果を返すデモ */
 function QuestionPageDemo({ verdict }: { verdict: Verdict }) {
   const [code, setCode] = useState(questionDetailFixture.answerCode);
+  const [savedCode, setSavedCode] = useState(questionDetailFixture.answerCode);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<MarkResult | null>(null);
 
   const submit = () => {
+    setSavedCode(code);
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
@@ -43,8 +45,12 @@ function QuestionPageDemo({ verdict }: { verdict: Verdict }) {
       questionHref={questionHref}
       code={code}
       onCodeChange={setCode}
-      onSave={() => {}}
-      onReset={() => setCode(questionDetailFixture.templateCode)}
+      dirty={code !== savedCode}
+      onSave={setSavedCode}
+      onReset={() => {
+        setCode(questionDetailFixture.templateCode);
+        setSavedCode(questionDetailFixture.templateCode);
+      }}
       onSubmit={submit}
       submitting={submitting}
       result={result}

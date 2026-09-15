@@ -35,6 +35,8 @@ export type QuestionPageProps = {
   /** エディタの内容 (制御コンポーネント) */
   code: string;
   onCodeChange: (code: string) => void;
+  /** エディタの内容が保存済みの内容と違う (ファイル名の横に未保存の印を出す) */
+  dirty?: boolean;
   /** Cmd/Ctrl+S で呼ばれる */
   onSave: (code: string) => void;
   /** 回答ファイルをテンプレートの内容に戻す (確認ダイアログで確定したときに呼ばれる) */
@@ -59,6 +61,7 @@ export function QuestionPage({
   questionHref,
   code,
   onCodeChange,
+  dirty = false,
   onSave,
   onReset,
   onSubmit,
@@ -122,9 +125,25 @@ export function QuestionPage({
             {messages.question.reset}
           </Button>
           <Flex align="center" gap="md">
-            <Text as="span" color="muted" size="xs">
-              {question.answerFileName}
-            </Text>
+            <Flex align="center" gap="xs">
+              <Text as="span" color="muted" size="xs">
+                {question.answerFileName}
+              </Text>
+              {dirty && (
+                <Text
+                  as="span"
+                  color="muted"
+                  size="xs"
+                  // 文字記号に読み上げ名を付けるには role="img" が正しい (img 要素には置き換えられない)
+                  // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+                  role="img"
+                  aria-label={messages.question.unsaved}
+                  title={messages.question.unsaved}
+                >
+                  ●
+                </Text>
+              )}
+            </Flex>
             <Button onClick={onSubmit} disabled={submitting}>
               {submitting ? messages.question.submitting : messages.question.submit}
             </Button>

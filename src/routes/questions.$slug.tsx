@@ -42,6 +42,7 @@ function QuestionEditor({
       questionHref={questionHref}
       code={editor.code}
       onCodeChange={editor.setCode}
+      dirty={editor.dirty}
       onSave={editor.save}
       onReset={editor.reset}
       onSubmit={editor.submit}

@@ -1,6 +1,7 @@
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -23,6 +24,7 @@ const scaffold = (overrides: Partial<Parameters<typeof scaffoldProject>[0]> = {}
     language: "日本語",
     packageName: "@akahoshi1421/sage",
     packageVersion: "1.2.3",
+    packageRoot: fileURLToPath(new URL("../../..", import.meta.url)),
     ...overrides,
   });
 

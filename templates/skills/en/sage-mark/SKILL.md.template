@@ -1,0 +1,27 @@
+---
+name: sage-mark
+description: Grade the learner's answer file (answer.*) for the given question number. Use as "{{call}} <number>". The last line of the output must be 🟢 / 🟡 / 🔴 followed by a short comment.
+argument-hint: <question number>
+disable-model-invocation: true
+allowed-tools: Bash(npx sage solved:*)
+---
+
+# {{call}} — grade an answer
+
+Question number: {{arguments}}
+
+## Steps
+
+1. Find `questions/*/{number}-*/` and read `QUESTION.md` (requirements), `ANSWER.md` (reference solution) and `answer.*` (the learner's answer). `template.*` is only the starting point; do not grade it.
+2. Check the requirements one by one. Verify by running or type-checking the code when possible (you may write a temporary test outside `questions/`, but never modify files inside `questions/`). If it cannot be run, judge by reading the code.
+3. Decide the verdict.
+   - 🟢 Correct: all requirements are met
+   - 🟡 Almost: mostly right, but some requirements are not met
+   - 🔴 Incorrect: the main requirements are not met, or the answer is still the template
+4. On 🟢 run `npx sage solved {number}` to record the correct answer.
+5. Make the **last line** of your output exactly one of the following, and output nothing after it:
+   - `🟢 Correct (comment)`
+   - `🟡 Almost (comment)`
+   - `🔴 Incorrect (comment)`
+
+   Write the comment in **{{language}}** as short feedback for the learner (what was good, or what to fix next).

@@ -1,0 +1,11 @@
+{
+  "name": "{{name}}",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "sage start"
+  },
+  "devDependencies": {
+    "{{packageName}}": "^{{packageVersion}}"
+  }
+}

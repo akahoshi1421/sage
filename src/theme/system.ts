@@ -8,6 +8,11 @@ import {
 } from "@chakra-ui/react";
 
 import { dadsTokens } from "./dads-tokens";
+import { accordionSlotRecipe } from "./recipes/accordion";
+import { checkmarkRecipe } from "./recipes/checkmark";
+import { dialogSlotRecipe } from "./recipes/dialog";
+import { drawerSlotRecipe } from "./recipes/drawer";
+import { splitterSlotRecipe } from "./recipes/splitter";
 import { textStyles } from "./text-styles";
 
 type Scale = Record<string, string | number>;
@@ -47,6 +52,18 @@ const tokens = defineTokens({
     heading: { value: dadsTokens.fontFamily.sans },
   },
   fontSizes: toTokenScale(dadsTokens.fontSize),
+  /**
+   * 余白のスケール。レイアウト部品の gap / padding / margin はこの 6 段階からだけ選ぶ。
+   * (4px グリッド: xs 4 / sm 8 / md 16 / lg 24 / xl 32)
+   */
+  spacing: {
+    none: { value: "0" },
+    xs: { value: "0.25rem" },
+    sm: { value: "0.5rem" },
+    md: { value: "1rem" },
+    lg: { value: "1.5rem" },
+    xl: { value: "2rem" },
+  },
   lineHeights: toTokenScale(dadsTokens.lineHeight),
   radii: toTokenScale(dadsTokens.borderRadius),
   shadows: {
@@ -150,6 +167,15 @@ const config = defineConfig({
     tokens,
     semanticTokens,
     textStyles,
+    recipes: {
+      checkmark: checkmarkRecipe,
+    },
+    slotRecipes: {
+      accordion: accordionSlotRecipe,
+      dialog: dialogSlotRecipe,
+      drawer: drawerSlotRecipe,
+      splitter: splitterSlotRecipe,
+    },
   },
 });
 

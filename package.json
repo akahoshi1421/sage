@@ -23,12 +23,13 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typegen": "chakra typegen ./src/theme/system.ts",
-    "prepare": "husky && npm run typegen"
+    "prepare": "husky && npm run typegen",
+    "generate:icons": "node scripts/generate-icons.ts && oxfmt src/components/ui/icons/dads-icons.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.37.0",
@@ -43,7 +44,8 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.4.3"
   },
   "devDependencies": {
     "@chakra-ui/cli": "^3.37.0",

@@ -4,6 +4,21 @@ AI 時代に新しいライブラリを効率的に学ぶためのフレーム�
 
 設計ドキュメントは [`docs/README.md`](docs/README.md) を参照してください。
 
+## 使い方 (利用者向け)
+
+```bash
+mkdir learn-vue && cd learn-vue
+npx @akahoshi1421/sage@latest create   # エージェント (Claude Code / Codex) と言語を選ぶ
+```
+
+展開後、そのディレクトリで Claude Code (または Codex) を起動し、`/sage-create vue.js` (Codex は `$sage-create vue.js`) で問題集を生成します。`questions/**/answer.*` に回答を書いて `/sage-mark <番号>` で採点するか、`npm run start` で Web 版 (http://localhost:3000) を使います。
+
+| コマンド                        | 内容                                                                                               |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `npx @akahoshi1421/sage create` | 対話形式で学習環境を展開する (`sage.config.json`、`questions/`、SKILLS、`package.json` の `start`) |
+| `npm run start` (`sage start`)  | Web 版を起動する。`--port <番号>`、`--no-open` (ブラウザを開かない)                                |
+| `npx sage solved <番号>`        | 問題を正解済みとして記録する (`/sage-mark` が正解時に実行する)                                     |
+
 ## 必要なもの
 
 - Node.js 24 以上 (`.node-version`)
@@ -33,6 +48,13 @@ npm ci
 | `npm run generate:icons`                  | `docs/designsystem-assets/icon/svg` (git 管理外) から `src/components/ui/icons/dads-icons.ts` を再生成 |
 
 commit 時には lint-staged が oxfmt / oxlint / `tsc --noEmit` を実行します。CI (GitHub Actions) では lint / format check / typecheck / test / Storybook build を実行します。
+
+## コード規約
+
+- `.tsx` (コンポーネント・ルート) にはレンダリングだけを書き、ロジックは同じ機能ディレクトリの `hooks/` (カスタムフック、1 フック 1 ファイル) と `utils/` (純粋関数、1 関数 1 ファイル) に分けます
+- アプリ本体は `src/components/ui` の部品だけを使い、`@chakra-ui/react` を直接 import しません
+- テストは目的駆動 (「ユーザがこの操作をした結果こうなる」) で書きます。`*.test.tsx` は jsdom、`*.test.ts` は Node で実行されます
+- コミットは 1 小タスクごと、英語で `add:` / `fix:` などのプレフィックスを付けます
 
 ## ディレクトリ構成
 

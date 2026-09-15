@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { render, screen, userEvent } from "#/test/render";
 
-import { CodeEditor, languageFromFilename } from "./code-editor";
+import { CodeEditor } from "./code-editor";
+import { languageFromFilename } from "./utils/language-from-filename";
 
 /** Monaco は jsdom で動かないため、登録されたキーボードコマンドを記録するだけの偽物に置き換える */
 const monacoMock = vi.hoisted(() => ({

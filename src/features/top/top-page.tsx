@@ -13,7 +13,7 @@ import {
 import { groupQuestionsByDifficulty } from "#/features/questions/group-by-difficulty";
 import { QuestionList } from "#/features/questions/question-list";
 import type { QuestionSummary, Subject } from "#/features/questions/types";
-import { useMessages } from "#/i18n/locale";
+import { useMessages } from "#/i18n/hooks/use-messages";
 
 export type TopPageProps = {
   /** 学習対象の技術 */

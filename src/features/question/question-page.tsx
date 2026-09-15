@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   Accordion,
   AppHeader,
@@ -22,13 +20,11 @@ import {
 } from "#/components/ui";
 import { groupQuestionsByDifficulty } from "#/features/questions/group-by-difficulty";
 import { QuestionList } from "#/features/questions/question-list";
-import type {
-  MarkResult,
-  QuestionDetail,
-  QuestionSummary,
-  Verdict,
-} from "#/features/questions/types";
-import { useMessages } from "#/i18n/locale";
+import type { MarkResult, QuestionDetail, QuestionSummary } from "#/features/questions/types";
+import { useMessages } from "#/i18n/hooks/use-messages";
+
+import { useQuestionPageDialogs } from "./hooks/use-question-page-dialogs";
+import { verdictLabel, verdictStatus } from "./utils/verdict-status";
 
 export type QuestionPageProps = {
   question: QuestionDetail;
@@ -56,12 +52,6 @@ export type QuestionPageProps = {
   errorMessage?: string | null;
 };
 
-const verdictStatus: Record<Verdict, "success" | "warning" | "error"> = {
-  correct: "success",
-  close: "warning",
-  incorrect: "error",
-};
-
 /** 回答ページ: 左に問題文・ヒント・答え、右にコードエディタと回答ボタン */
 export function QuestionPage({
   question,
@@ -79,16 +69,8 @@ export function QuestionPage({
   errorMessage,
 }: QuestionPageProps) {
   const messages = useMessages();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [answerOpen, setAnswerOpen] = useState(false);
-  const [resetOpen, setResetOpen] = useState(false);
+  const dialogs = useQuestionPageDialogs();
   const groups = groupQuestionsByDifficulty(questions);
-
-  const verdictLabels: Record<Verdict, string> = {
-    correct: messages.result.correct,
-    close: messages.result.close,
-    incorrect: messages.result.incorrect,
-  };
 
   const questionPane = (
     <Box h="100%" overflowY="auto" px={{ base: "md", md: "lg" }} py="lg">
@@ -107,7 +89,7 @@ export function QuestionPage({
           ]}
         />
         <Box>
-          <Button variant="outline" onClick={() => setAnswerOpen(true)}>
+          <Button variant="outline" onClick={() => dialogs.answer.setOpen(true)}>
             {messages.question.showAnswer}
           </Button>
         </Box>
@@ -136,7 +118,7 @@ export function QuestionPage({
           </Box>
         )}
         <Flex justify="space-between" align="center" gap="md" px="md" py="md">
-          <Button variant="text" size="sm" onClick={() => setResetOpen(true)}>
+          <Button variant="text" size="sm" onClick={() => dialogs.reset.setOpen(true)}>
             {messages.question.reset}
           </Button>
           <Flex align="center" gap="md">
@@ -169,12 +151,15 @@ export function QuestionPage({
       <AppHeader
         homeHref="/"
         startSlot={
-          <HamburgerMenuButton label={messages.nav.menu} onClick={() => setMenuOpen(true)} />
+          <HamburgerMenuButton
+            label={messages.nav.menu}
+            onClick={() => dialogs.menu.setOpen(true)}
+          />
         }
       />
       <Drawer
-        open={menuOpen}
-        onOpenChange={setMenuOpen}
+        open={dialogs.menu.open}
+        onOpenChange={dialogs.menu.setOpen}
         title={messages.nav.questionList}
         closeLabel={messages.nav.close}
       >
@@ -205,8 +190,8 @@ export function QuestionPage({
       </Box>
 
       <Dialog
-        open={answerOpen}
-        onOpenChange={setAnswerOpen}
+        open={dialogs.answer.open}
+        onOpenChange={dialogs.answer.setOpen}
         title={messages.question.answerTitle}
         size="lg"
         scrollBehavior="inside"
@@ -216,8 +201,8 @@ export function QuestionPage({
       </Dialog>
 
       <Dialog
-        open={resetOpen}
-        onOpenChange={setResetOpen}
+        open={dialogs.reset.open}
+        onOpenChange={dialogs.reset.setOpen}
         role="alertdialog"
         title={messages.question.resetConfirmTitle}
         footer={
@@ -226,7 +211,7 @@ export function QuestionPage({
             <Button
               onClick={() => {
                 onReset();
-                setResetOpen(false);
+                dialogs.reset.setOpen(false);
               }}
             >
               {messages.question.resetConfirm}
@@ -250,7 +235,7 @@ export function QuestionPage({
         {result && (
           <VStack align="start" gap="md">
             <StatusBadge status={verdictStatus[result.verdict]}>
-              {verdictLabels[result.verdict]}
+              {verdictLabel(messages, result.verdict)}
             </StatusBadge>
             <Text>{result.comment}</Text>
           </VStack>

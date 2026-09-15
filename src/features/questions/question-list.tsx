@@ -1,5 +1,5 @@
 import { Checkmark, Link, List, ListItem } from "#/components/ui";
-import { useMessages } from "#/i18n/locale";
+import { useMessages } from "#/i18n/hooks/use-messages";
 
 import type { QuestionSummary } from "./types";
 

@@ -1,13 +1,10 @@
 import { chakra } from "@chakra-ui/react";
 import type { Ref } from "react";
 
-import { type DadsIconName, dadsIcons } from "./icons/dads-icons";
-import { type GlyphIconName, glyphIcons } from "./icons/glyph-icons";
+import { type IconName, icons } from "./icons/registry";
 
-export type IconName = DadsIconName | GlyphIconName;
+export { type IconName, iconNames } from "./icons/registry";
 export type IconSize = "sm" | "md" | "lg";
-
-const icons = { ...dadsIcons, ...glyphIcons };
 
 const sizeMap: Record<IconSize, string> = {
   sm: "1rem",
@@ -57,6 +54,3 @@ export function Icon({ name, size = "md", label, ...rest }: IconProps) {
     </chakra.svg>
   );
 }
-
-/** 利用できるアイコン名の一覧 (Storybook などの一覧表示用) */
-export const iconNames = Object.keys(icons) as IconName[];

@@ -1,66 +1,8 @@
 import { chakra } from "@chakra-ui/react";
 import MonacoEditor, { type OnMount } from "@monaco-editor/react";
-import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-const EXTENSION_LANGUAGES: Record<string, string> = {
-  ts: "typescript",
-  tsx: "typescript",
-  mts: "typescript",
-  cts: "typescript",
-  js: "javascript",
-  jsx: "javascript",
-  mjs: "javascript",
-  cjs: "javascript",
-  py: "python",
-  rb: "ruby",
-  go: "go",
-  rs: "rust",
-  java: "java",
-  kt: "kotlin",
-  kts: "kotlin",
-  cs: "csharp",
-  c: "c",
-  h: "c",
-  cpp: "cpp",
-  cc: "cpp",
-  hpp: "cpp",
-  php: "php",
-  swift: "swift",
-  dart: "dart",
-  scala: "scala",
-  sh: "shell",
-  bash: "shell",
-  zsh: "shell",
-  sql: "sql",
-  json: "json",
-  yml: "yaml",
-  yaml: "yaml",
-  md: "markdown",
-  html: "html",
-  vue: "html",
-  svelte: "html",
-  css: "css",
-  scss: "scss",
-  less: "less",
-  xml: "xml",
-  graphql: "graphql",
-  gql: "graphql",
-  lua: "lua",
-  r: "r",
-  pl: "perl",
-  ps1: "powershell",
-  toml: "ini",
-  ini: "ini",
-};
-
-/** ファイル名 (例: `template.ts`) から Monaco の言語 ID を推定する。不明なら plaintext */
-export function languageFromFilename(filename: string): string {
-  const base = filename.split("/").pop() ?? filename;
-  if (/^dockerfile$/i.test(base)) return "dockerfile";
-  const dot = base.lastIndexOf(".");
-  const extension = dot >= 0 ? base.slice(dot + 1).toLowerCase() : "";
-  return EXTENSION_LANGUAGES[extension] ?? "plaintext";
-}
+import { useIsClient } from "./hooks/use-is-client";
 
 const Frame = chakra("section", {
   className: "sage-code-editor",
@@ -85,16 +27,6 @@ const Placeholder = chakra("output", {
     textStyle: "dns-14N-130",
   },
 });
-
-const subscribeNoop = () => () => {};
-
-/** サーバー描画・ハイドレーション中は false、クライアントで描画が確定したら true */
-const useIsClient = () =>
-  useSyncExternalStore(
-    subscribeNoop,
-    () => true,
-    () => false,
-  );
 
 export type CodeEditorProps = {
   /** エディタの内容 (制御コンポーネント) */

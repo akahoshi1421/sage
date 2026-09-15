@@ -14,12 +14,15 @@ afterEach(async () => {
 describe("設定ファイル", () => {
   it("create で選んだエージェントと言語が読める", async () => {
     // Arrange
-    fixture = await createProjectFixture({ config: '{ "agent": "codex", "locale": "ja" }' });
+    fixture = await createProjectFixture({
+      config: '{ "agent": "codex", "locale": "ja", "language": "日本語" }',
+    });
 
     // Act / Assert
     await expect(loadConfig(fixture.paths.configFile)).resolves.toEqual({
       agent: "codex",
       locale: "ja",
+      language: "日本語",
     });
   });
 

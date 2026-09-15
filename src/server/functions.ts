@@ -1,0 +1,113 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+import type { MarkResult } from "#/features/questions/types";
+
+import { loadConfig } from "./config";
+import { MarkError, markQuestion } from "./marking/mark";
+import { resolveProjectPaths } from "./paths";
+import { openProgressDb } from "./progress/db";
+import { listSolvedNumbers } from "./progress/repository";
+import {
+  listQuestionSummaries,
+  readQuestionDetail,
+  readSubject,
+  resetAnswer,
+  saveAnswer,
+} from "./questions/repository";
+
+/** `{番号}-{slug}` 形式のディレクトリ名 (パス区切りを含まない) */
+const slugSchema = z.string().regex(/^\d+-[^/\\]+$/);
+
+const numberFromSlug = (slug: string) => Number(/^(\d+)-/.exec(slug)?.[1]);
+
+/** 進捗 DB を開いて処理し、必ず閉じる */
+async function withProgressDb<T>(
+  dbFile: string,
+  run: (db: ReturnType<typeof openProgressDb>["db"]) => Promise<T>,
+) {
+  const handle = openProgressDb(dbFile);
+  try {
+    return await run(handle.db);
+  } finally {
+    handle.close();
+  }
+}
+
+/** 表示言語などアプリ全体で使う設定 */
+export const getAppContext = createServerFn({ method: "GET" }).handler(async () => {
+  const paths = resolveProjectPaths();
+  const config = await loadConfig(paths.configFile);
+  return { locale: config.locale, agent: config.agent };
+});
+
+/** トップページ: 学習対象の概要と問題一覧 */
+export const getTopPageData = createServerFn({ method: "GET" }).handler(async () => {
+  const paths = resolveProjectPaths();
+  return withProgressDb(paths.dbFile, async (db) => {
+    const solved = await listSolvedNumbers(db);
+    const [subject, questions] = await Promise.all([
+      readSubject(paths),
+      listQuestionSummaries(paths, solved),
+    ]);
+    return { subject, questions };
+  });
+});
+
+/** 回答ページ: 問題の詳細と (ドロワー用の) 問題一覧 */
+export const getQuestionPageData = createServerFn({ method: "GET" })
+  .inputValidator((input: unknown) => slugSchema.parse(input))
+  .handler(async ({ data: slug }) => {
+    const paths = resolveProjectPaths();
+    return withProgressDb(paths.dbFile, async (db) => {
+      const solved = await listSolvedNumbers(db);
+      const [question, questions] = await Promise.all([
+        readQuestionDetail(paths, slug, solved.has(numberFromSlug(slug))),
+        listQuestionSummaries(paths, solved),
+      ]);
+      return { question, questions };
+    });
+  });
+
+/** 回答ファイルを保存する (Cmd/Ctrl+S) */
+export const saveAnswerFn = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => z.object({ slug: slugSchema, code: z.string() }).parse(input))
+  .handler(async ({ data }) => {
+    await saveAnswer(resolveProjectPaths(), data.slug, data.code);
+  });
+
+/** 回答ファイルをテンプレートの内容に戻す */
+export const resetAnswerFn = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => slugSchema.parse(input))
+  .handler(async ({ data: slug }) => {
+    const code = await resetAnswer(resolveProjectPaths(), slug);
+    return { code };
+  });
+
+export type MarkOutcome =
+  | { ok: true; result: MarkResult }
+  | { ok: false; message: string; output: string };
+
+/** 設定されたエージェントで採点する。正解なら進捗に記録する */
+export const markQuestionFn = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => slugSchema.parse(input))
+  .handler(async ({ data: slug }): Promise<MarkOutcome> => {
+    const paths = resolveProjectPaths();
+    const config = await loadConfig(paths.configFile);
+    return withProgressDb(paths.dbFile, async (db) => {
+      try {
+        const result = await markQuestion({
+          agent: config.agent,
+          number: numberFromSlug(slug),
+          cwd: paths.root,
+          db,
+        });
+        return { ok: true, result };
+      } catch (error) {
+        if (error instanceof MarkError) {
+          return { ok: false, message: error.message, output: error.output };
+        }
+        throw error;
+      }
+    });
+  });

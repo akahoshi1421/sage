@@ -1,5 +1,8 @@
 import path from "node:path";
 
+/** Web エディタ (Monaco) を学習対象に合わせて整えるアダプタ (省略可) */
+export const EDITOR_ADAPTER_FILE = "sage.editor.js";
+
 /** 利用者プロジェクト内の主要なパス */
 export type ProjectPaths = {
   /** プロジェクトのルート (通常はカレントディレクトリ) */

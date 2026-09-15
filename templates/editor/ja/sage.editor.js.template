@@ -1,0 +1,37 @@
+/**
+ * sage の Web エディタ (Monaco Editor) を学習対象に合わせて整えるアダプタ。
+ * このファイルは省略可能で、あるときだけブラウザで ES モジュールとして読み込まれる。
+ *
+ * - setup({ monaco, project }): Monaco が読み込まれたときに 1 回呼ばれる。型定義の登録や言語の追加はここで行う
+ * - open({ monaco, editor, project, question }): 問題を開くたびに呼ばれる。エディタ (IStandaloneCodeEditor) の設定はここで行う
+ *   question は { number, slug, difficulty, title, answerFileName, answerFilePath, language (Monaco の言語 ID) }
+ *
+ * project でプロジェクト内のファイルを読める (プロジェクトの外は読めない):
+ * - project.readFiles(dir, suffixes): dir 以下で名前が suffixes のどれかで終わるファイルを { 相対パス: 内容 } で返す
+ * - project.readFile(path): 1 ファイルの内容 (無ければ null)
+ *
+ * import できるのは URL だけ (npm パッケージ名は解決できない)。エラーはブラウザのコンソールに出る。
+ */
+
+export async function setup({ monaco, project }) {
+  // 例: TypeScript/JavaScript のライブラリ (ここでは zod) の型定義を読み込み、import の補完と型チェックを効かせる。
+  // 回答ファイルは file:///questions/... として開かれるので、file:///node_modules/... に置けば Node と同じ解決になる。
+  //
+  // const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
+  // for (const [file, content] of Object.entries(files)) {
+  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `file:///${file}`);
+  // }
+  // const ts = monaco.languages.typescript;
+  // ts.typescriptDefaults.setCompilerOptions({
+  //   ...ts.typescriptDefaults.getCompilerOptions(),
+  //   module: ts.ModuleKind.ESNext,
+  //   moduleResolution: ts.ModuleResolutionKind.NodeJs,
+  //   target: ts.ScriptTarget.ES2022,
+  //   strict: true,
+  // });
+}
+
+export function open({ editor, question }) {
+  // 例: Python の問題ではインデントを 4 にする
+  // if (question.language === "python") editor.updateOptions({ tabSize: 4 });
+}

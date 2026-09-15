@@ -28,6 +28,8 @@ export type QuestionDetail = QuestionSummary & {
   templateCode: string;
   /** ユーザが回答を書き込むファイル名 (例: `answer.ts`)。初期値はテンプレートと同じ */
   answerFileName: string;
+  /** 回答ファイルのプロジェクトルートからの相対パス (例: `questions/easy/2-safe-parse/answer.ts`) */
+  answerFilePath: string;
   /** 回答ファイルの現在の内容 */
   answerCode: string;
 };

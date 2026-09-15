@@ -56,6 +56,20 @@ describe("学習環境の展開", () => {
     expect(pkg.scripts.start).toBe("sage start");
     expect(pkg.devDependencies["@akahoshi1421/sage"]).toBe("^1.2.3");
     await expect(read(".gitignore")).resolves.toContain(".sage/");
+    await expect(read("sage.editor.js")).resolves.toContain("export async function setup(");
+  });
+
+  it("既にある sage.editor.js は上書きされない", async () => {
+    // Arrange
+    root = await mkdtemp(path.join(os.tmpdir(), "sage-create-"));
+    await writeFile(path.join(root, "sage.editor.js"), "export function setup() {}\n", "utf8");
+
+    // Act
+    const result = await scaffold();
+
+    // Assert
+    await expect(read("sage.editor.js")).resolves.toBe("export function setup() {}\n");
+    expect(result.files).not.toContain("sage.editor.js");
   });
 
   it("Codex を選ぶと SKILL は .agents/skills に置かれ、$sage-create の呼び方で案内される", async () => {

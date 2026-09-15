@@ -63,6 +63,25 @@ describe("回答の編集", () => {
     expect(result.current.result).toBeNull();
   });
 
+  it("編集すると未保存になり、Cmd+S で保存すると保存済みに戻る", async () => {
+    // Arrange
+    const { result } = renderHook(() => useQuestionEditor(questionDetailFixture));
+    expect(result.current.dirty).toBe(false);
+
+    // Act
+    act(() => result.current.setCode("// edited"));
+
+    // Assert
+    expect(result.current.dirty).toBe(true);
+
+    // Act
+    act(() => result.current.save("// edited"));
+
+    // Assert
+    await waitFor(() => expect(result.current.dirty).toBe(false));
+    expect(saveAnswerFn).toHaveBeenCalledWith({ data: { slug: "7-ref", code: "// edited" } });
+  });
+
   it("リセットするとエディタの内容がテンプレートに戻る", async () => {
     // Arrange
     const { result } = renderHook(() => useQuestionEditor(questionDetailFixture));

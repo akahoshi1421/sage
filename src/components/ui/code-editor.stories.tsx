@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { fn } from "storybook/test";
 
-import { CodeEditor, languageFromFilename } from "./code-editor";
+import { CodeEditor } from "./code-editor";
+import { languageFromFilename } from "./utils/language-from-filename";
 import { Box } from "./layout";
 
 const meta = {

@@ -7,6 +7,7 @@ import { focusVisibleTextStyle } from "#/theme/focus";
 
 import { CodeBlock } from "./code-block";
 import { Icon } from "./icon";
+import { isExternalHref } from "./utils/is-external-href";
 
 /**
  * Markdown 本文のタイポグラフィ (デジタル庁デザインシステムの本文・見出し・コードの定義に合わせる)。
@@ -86,8 +87,6 @@ const markdownRecipe = defineRecipe({
 });
 
 const Prose = chakra("div", markdownRecipe);
-
-const isExternalHref = (href: string | undefined) => /^https?:\/\//.test(href ?? "");
 
 type AnchorProps = ComponentPropsWithoutRef<"a">;
 

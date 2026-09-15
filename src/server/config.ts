@@ -8,11 +8,13 @@ export const sageConfigSchema = z.object({
   agent: z.enum(["claude", "codex"]),
   /** Web 版 UI の表示言語 */
   locale: z.enum(["ja", "en"]).default("en"),
+  /** 問題文・ヒント・答え・採点の一言を書く言語 (自由記述。例: 日本語 / English / Français) */
+  language: z.string().min(1).default("English"),
 });
 
 export type SageConfig = z.infer<typeof sageConfigSchema>;
 
-export const DEFAULT_CONFIG: SageConfig = { agent: "claude", locale: "en" };
+export const DEFAULT_CONFIG: SageConfig = { agent: "claude", locale: "en", language: "English" };
 
 const isMissingFile = (error: unknown) =>
   typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";

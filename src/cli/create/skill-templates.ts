@@ -57,7 +57,7 @@ ${claudeOnlyFrontmatter(agent, ["argument-hint: <技術名>", "disable-model-inv
 
 ## 制約
 
-- \`questions/\` 以外のファイルは変更しない。
+- \`questions/\` 以外のファイルは変更しない。動作確認のために一時ファイルを作った場合は、終了前に削除する。
 - すでに問題がある場合は、番号を続きから採番し、重複するテーマは避ける。
 - Markdown のコードブロックには必ず言語を指定する。
 `;
@@ -90,7 +90,7 @@ Write every question, hint, answer and explanation in **${language}**.
 
 ## Constraints
 
-- Do not modify anything outside \`questions/\`.
+- Do not modify anything outside \`questions/\`. Delete any temporary files you created for verification before finishing.
 - If questions already exist, continue the numbering and avoid duplicate topics.
 - Always specify a language on Markdown code blocks.
 `;

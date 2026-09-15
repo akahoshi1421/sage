@@ -1,28 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Button, Container, Heading, HStack, Icon, Text, VStack } from "#/components/ui";
+import { TopPage } from "#/features/top/top-page";
+import { getTopPageData } from "#/server/functions";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  loader: () => getTopPageData(),
+  head: ({ loaderData }) => ({
+    meta: [{ title: loaderData ? `${loaderData.subject.name} | sage` : "sage" }],
+  }),
+  component: Home,
+});
 
 function Home() {
+  const { subject, questions } = Route.useLoaderData();
   return (
-    <Container maxW="4xl" py="xl">
-      <VStack align="start" gap="lg">
-        <Heading level="h1" size="36" chip>
-          sage
-        </Heading>
-        <Text>AI 時代に新しいライブラリを効率的に学ぶためのフレームワークです。</Text>
-        <HStack gap="md">
-          <Button>
-            <Icon name="complete_line" />
-            回答する
-          </Button>
-          <Button variant="outline">
-            次の問題へ
-            <Icon name="arrow_right_line" />
-          </Button>
-        </HStack>
-      </VStack>
-    </Container>
+    <TopPage
+      subject={subject}
+      questions={questions}
+      questionHref={(question) => `/questions/${question.slug}`}
+    />
   );
 }

@@ -1,6 +1,16 @@
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  type ErrorComponentProps,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 
+import { Button, Container, Heading, Text, VStack } from "#/components/ui";
 import { UIProvider } from "#/components/ui/provider";
+import { useMessages } from "#/i18n/locale";
+import { LocaleProvider } from "#/i18n/locale-provider";
+import { getAppContext } from "#/server/functions";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -18,7 +28,11 @@ export const Route = createRootRoute({
       },
     ],
   }),
+  loader: () => getAppContext(),
   shellComponent: RootDocument,
+  component: RootComponent,
+  notFoundComponent: NotFound,
+  errorComponent: ErrorView,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -32,5 +46,49 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function RootComponent() {
+  const { locale } = Route.useLoaderData();
+  return (
+    <LocaleProvider locale={locale}>
+      <Outlet />
+    </LocaleProvider>
+  );
+}
+
+function NotFound() {
+  const messages = useMessages();
+  return (
+    <Container maxW="4xl" py="xl">
+      <VStack align="start" gap="md">
+        <Heading level="h1" size="28">
+          {messages.error.notFoundTitle}
+        </Heading>
+        <Text>{messages.error.notFoundBody}</Text>
+        <Button asChild variant="outline">
+          <a href="/">{messages.nav.backToTop}</a>
+        </Button>
+      </VStack>
+    </Container>
+  );
+}
+
+function ErrorView({ error }: ErrorComponentProps) {
+  const messages = useMessages();
+  const detail = error instanceof Error ? error.message : String(error);
+  return (
+    <Container maxW="4xl" py="xl">
+      <VStack align="start" gap="md">
+        <Heading level="h1" size="28">
+          {messages.error.unexpectedTitle}
+        </Heading>
+        <Text color="error">{detail}</Text>
+        <Button asChild variant="outline">
+          <a href="/">{messages.nav.backToTop}</a>
+        </Button>
+      </VStack>
+    </Container>
   );
 }

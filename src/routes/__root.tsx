@@ -4,9 +4,10 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouter,
 } from "@tanstack/react-router";
 
-import { Button, Container, Heading, Text, VStack } from "#/components/ui";
+import { Button, Container, Heading, NavigationProvider, Text, VStack } from "#/components/ui";
 import { UIProvider } from "#/components/ui/provider";
 import { useMessages } from "#/i18n/hooks/use-messages";
 import { LocaleProvider } from "#/i18n/locale-provider";
@@ -51,9 +52,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { locale } = Route.useLoaderData();
+  const router = useRouter();
   return (
     <LocaleProvider locale={locale}>
-      <Outlet />
+      <NavigationProvider navigate={(href) => void router.navigate({ href })}>
+        <Outlet />
+      </NavigationProvider>
     </LocaleProvider>
   );
 }
@@ -67,8 +71,8 @@ function NotFound() {
           {messages.error.notFoundTitle}
         </Heading>
         <Text>{messages.error.notFoundBody}</Text>
-        <Button asChild variant="outline">
-          <a href="/">{messages.nav.backToTop}</a>
+        <Button variant="outline" href="/">
+          {messages.nav.backToTop}
         </Button>
       </VStack>
     </Container>
@@ -85,8 +89,8 @@ function ErrorView({ error }: ErrorComponentProps) {
           {messages.error.unexpectedTitle}
         </Heading>
         <Text color="error">{detail}</Text>
-        <Button asChild variant="outline">
-          <a href="/">{messages.nav.backToTop}</a>
+        <Button variant="outline" href="/">
+          {messages.nav.backToTop}
         </Button>
       </VStack>
     </Container>

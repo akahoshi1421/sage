@@ -116,6 +116,7 @@ describe("回答ページの問題詳細", () => {
       templateFileName: "template.vue",
       templateCode: "<template />\n",
       answerFileName: "answer.vue",
+      answerFilePath: "questions/easy/7-ref/answer.vue",
       answerCode: "<template>answer</template>\n",
     });
   });

@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
+import { useEditorAdapter } from "#/features/question/hooks/use-editor-adapter";
 import { useQuestionEditor } from "#/features/question/hooks/use-question-editor";
 import { QuestionPage } from "#/features/question/question-page";
 import { nextQuestionHrefOf } from "#/features/question/utils/next-question-href";
@@ -34,6 +35,7 @@ function QuestionEditor({
   questions: QuestionSummary[];
 }) {
   const editor = useQuestionEditor(question);
+  const onEditorMount = useEditorAdapter(question);
 
   return (
     <QuestionPage
@@ -44,6 +46,7 @@ function QuestionEditor({
       onCodeChange={editor.setCode}
       dirty={editor.dirty}
       onSave={editor.save}
+      onEditorMount={onEditorMount}
       onReset={editor.reset}
       onSubmit={editor.submit}
       submitting={editor.submitting}

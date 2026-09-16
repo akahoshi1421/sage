@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   CodeEditor,
+  type CodeEditorMount,
   Dialog,
   DialogCloseButton,
   Divider,
@@ -39,6 +40,8 @@ export type QuestionPageProps = {
   dirty?: boolean;
   /** Cmd/Ctrl+S で呼ばれる */
   onSave: (code: string) => void;
+  /** エディタが用意できたときに呼ばれる (sage.editor.js のアダプタを適用する) */
+  onEditorMount?: CodeEditorMount;
   /** 回答ファイルをテンプレートの内容に戻す (確認ダイアログで確定したときに呼ばれる) */
   onReset: () => void;
   /** 「回答」ボタンで呼ばれる (採点の開始) */
@@ -63,6 +66,7 @@ export function QuestionPage({
   onCodeChange,
   dirty = false,
   onSave,
+  onEditorMount,
   onReset,
   onSubmit,
   submitting = false,
@@ -108,6 +112,8 @@ export function QuestionPage({
           language={languageFromFilename(question.answerFileName)}
           onChange={onCodeChange}
           onSave={onSave}
+          onMount={onEditorMount}
+          path={`file:///${question.answerFilePath}`}
           label={question.answerFileName}
         />
       </Box>

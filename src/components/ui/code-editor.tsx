@@ -1,5 +1,5 @@
 import { chakra } from "@chakra-ui/react";
-import MonacoEditor, { type OnMount } from "@monaco-editor/react";
+import MonacoEditor, { type Monaco, type OnMount } from "@monaco-editor/react";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useIsClient } from "./hooks/use-is-client";
@@ -28,6 +28,10 @@ const Placeholder = chakra("output", {
   },
 });
 
+/** Monaco のエディタが用意できたときに呼ばれる (editor と monaco の API を受け取る) */
+export type CodeEditorMount = OnMount;
+export type { Monaco };
+
 export type CodeEditorProps = {
   /** エディタの内容 (制御コンポーネント) */
   value: string;
@@ -36,6 +40,10 @@ export type CodeEditorProps = {
   onChange?: (value: string) => void;
   /** Cmd/Ctrl+S で呼ばれる。ブラウザ既定の保存ダイアログは開かない */
   onSave?: (value: string) => void;
+  /** モデルの URI (例: `file:///questions/easy/2-safe-parse/answer.ts`)。TypeScript の import 解決などに使われる */
+  path?: string;
+  /** エディタが用意できたときに呼ばれる (アダプタによる設定など) */
+  onMount?: CodeEditorMount;
   /** 高さ。既定は親要素を埋める 100% */
   height?: string | number;
   readOnly?: boolean;
@@ -50,6 +58,8 @@ export function CodeEditor({
   language = "plaintext",
   onChange,
   onSave,
+  path,
+  onMount,
   height = "100%",
   readOnly = false,
   label = "コードエディタ",
@@ -63,10 +73,16 @@ export function CodeEditor({
     onSaveRef.current = onSave;
   }, [onSave]);
 
+  const onMountRef = useRef(onMount);
+  useEffect(() => {
+    onMountRef.current = onMount;
+  }, [onMount]);
+
   const handleMount = useCallback<OnMount>((editor, monaco) => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       onSaveRef.current?.(editor.getValue());
     });
+    onMountRef.current?.(editor, monaco);
   }, []);
 
   const placeholder = <Placeholder>エディタを読み込み中…</Placeholder>;
@@ -78,6 +94,7 @@ export function CodeEditor({
           height="100%"
           language={language}
           value={value}
+          path={path}
           theme="light"
           loading={placeholder}
           onChange={(nextValue) => onChange?.(nextValue ?? "")}

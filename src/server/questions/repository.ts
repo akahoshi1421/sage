@@ -160,6 +160,7 @@ export async function readQuestionDetail(
     templateFileName: files.templateFileName,
     templateCode,
     answerFileName: files.answerFileName,
+    answerFilePath: path.relative(paths.root, files.answerFile).split(path.sep).join("/"),
     answerCode,
   };
 }

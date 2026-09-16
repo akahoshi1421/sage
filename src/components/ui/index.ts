@@ -4,7 +4,7 @@ export { AppHeader, type AppHeaderProps } from "./app-header";
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
 export { Checkmark, type CheckmarkProps, type CheckmarkSize } from "./checkmark";
 export { CodeBlock, type CodeBlockProps } from "./code-block";
-export { CodeEditor, type CodeEditorProps } from "./code-editor";
+export { CodeEditor, type CodeEditorMount, type CodeEditorProps, type Monaco } from "./code-editor";
 export { languageFromFilename } from "./utils/language-from-filename";
 export {
   Dialog,

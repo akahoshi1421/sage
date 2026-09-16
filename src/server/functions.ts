@@ -4,8 +4,9 @@ import { z } from "zod";
 import type { MarkResult } from "#/features/questions/types";
 
 import { loadConfig } from "./config";
+import { readProjectFile, readProjectFiles } from "./editor/project-files";
 import { MarkError, markQuestion } from "./marking/mark";
-import { resolveProjectPaths } from "./paths";
+import { EDITOR_ADAPTER_FILE, resolveProjectPaths } from "./paths";
 import { openProgressDb } from "./progress/db";
 import { listSolvedNumbers } from "./progress/repository";
 import {
@@ -83,6 +84,28 @@ export const resetAnswerFn = createServerFn({ method: "POST" })
     const code = await resetAnswer(resolveProjectPaths(), slug);
     return { code };
   });
+
+/** エディタのアダプタ (`sage.editor.js`) のソース。無ければ null */
+export const getEditorAdapterFn = createServerFn({ method: "GET" }).handler(async () => {
+  const source = await readProjectFile(resolveProjectPaths().root, EDITOR_ADAPTER_FILE);
+  return { source };
+});
+
+/** アダプタ向け: プロジェクト内のディレクトリから拡張子の合うファイルをまとめて読む */
+export const readProjectFilesFn = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z.object({ dir: z.string(), suffixes: z.array(z.string()).min(1) }).parse(input),
+  )
+  .handler(async ({ data }) =>
+    readProjectFiles(resolveProjectPaths().root, data.dir, data.suffixes),
+  );
+
+/** アダプタ向け: プロジェクト内の 1 ファイルを読む (無ければ null) */
+export const readProjectFileFn = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => z.string().parse(input))
+  .handler(async ({ data: file }) => ({
+    content: await readProjectFile(resolveProjectPaths().root, file),
+  }));
 
 export type MarkOutcome =
   | { ok: true; result: MarkResult }

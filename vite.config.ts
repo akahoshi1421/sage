@@ -12,7 +12,9 @@ const sageLspBridge = (): Plugin => ({
   name: "sage-lsp-bridge",
   configureServer(server) {
     if (server.httpServer instanceof Server) {
-      attachLspBridge(server.httpServer, { root: path.resolve(process.env.SAGE_ROOT ?? process.cwd()) });
+      attachLspBridge(server.httpServer, {
+        root: path.resolve(process.env.SAGE_ROOT ?? process.cwd()),
+      });
     }
   },
 });

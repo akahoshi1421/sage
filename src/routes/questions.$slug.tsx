@@ -11,7 +11,7 @@ export const Route = createFileRoute("/questions/$slug")({
   loader: async ({ params }) => {
     const data = await getQuestionPageData({ data: params.slug });
     if (!data.question) throw notFound();
-    return { question: data.question, questions: data.questions };
+    return { question: data.question, questions: data.questions, rootUri: data.rootUri };
   },
   head: ({ loaderData }) => ({
     meta: [{ title: loaderData ? `${loaderData.question.title} | sage` : "sage" }],
@@ -22,20 +22,29 @@ export const Route = createFileRoute("/questions/$slug")({
 const questionHref = (question: QuestionSummary) => `/questions/${question.slug}`;
 
 function QuestionRoute() {
-  const { question, questions } = Route.useLoaderData();
+  const { question, questions, rootUri } = Route.useLoaderData();
   // 問題が変わったらエディタの状態を作り直す
-  return <QuestionEditor key={question.slug} question={question} questions={questions} />;
+  return (
+    <QuestionEditor
+      key={question.slug}
+      question={question}
+      questions={questions}
+      rootUri={rootUri}
+    />
+  );
 }
 
 function QuestionEditor({
   question,
   questions,
+  rootUri,
 }: {
   question: QuestionDetail;
   questions: QuestionSummary[];
+  rootUri: string;
 }) {
   const editor = useQuestionEditor(question);
-  const onEditorMount = useEditorAdapter(question);
+  const adapter = useEditorAdapter(question, rootUri);
 
   return (
     <QuestionPage
@@ -46,7 +55,9 @@ function QuestionEditor({
       onCodeChange={editor.setCode}
       dirty={editor.dirty}
       onSave={editor.save}
-      onEditorMount={onEditorMount}
+      rootUri={rootUri}
+      onEditorMount={adapter.onMount}
+      languageServer={adapter.languageServer}
       onReset={editor.reset}
       onSubmit={editor.submit}
       submitting={editor.submitting}

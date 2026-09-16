@@ -24,7 +24,9 @@ import { QuestionList } from "#/features/questions/question-list";
 import type { MarkResult, QuestionDetail, QuestionSummary } from "#/features/questions/types";
 import { useMessages } from "#/i18n/hooks/use-messages";
 
+import type { LanguageServerStatus } from "./hooks/use-editor-adapter";
 import { useQuestionPageDialogs } from "./hooks/use-question-page-dialogs";
+import { languageServerLabel } from "./utils/language-server-label";
 import { verdictLabel, verdictStatus } from "./utils/verdict-status";
 
 export type QuestionPageProps = {
@@ -40,8 +42,12 @@ export type QuestionPageProps = {
   dirty?: boolean;
   /** Cmd/Ctrl+S で呼ばれる */
   onSave: (code: string) => void;
+  /** プロジェクトのルートの file:// URI。エディタのモデルは `{rootUri}/{answerFilePath}` で開く */
+  rootUri?: string;
   /** エディタが用意できたときに呼ばれる (sage.editor.js のアダプタを適用する) */
   onEditorMount?: CodeEditorMount;
+  /** 言語サーバーの接続状態 (宣言されているときだけ回答バーに表示) */
+  languageServer?: LanguageServerStatus | null;
   /** 回答ファイルをテンプレートの内容に戻す (確認ダイアログで確定したときに呼ばれる) */
   onReset: () => void;
   /** 「回答」ボタンで呼ばれる (採点の開始) */
@@ -66,7 +72,9 @@ export function QuestionPage({
   onCodeChange,
   dirty = false,
   onSave,
+  rootUri = "file:///sage",
   onEditorMount,
+  languageServer = null,
   onReset,
   onSubmit,
   submitting = false,
@@ -113,7 +121,7 @@ export function QuestionPage({
           onChange={onCodeChange}
           onSave={onSave}
           onMount={onEditorMount}
-          path={`file:///${question.answerFilePath}`}
+          path={`${rootUri}/${question.answerFilePath}`}
           label={question.answerFileName}
         />
       </Box>
@@ -131,6 +139,15 @@ export function QuestionPage({
             {messages.question.reset}
           </Button>
           <Flex align="center" gap="md">
+            {languageServer && (
+              <Text
+                as="output"
+                color={languageServer.state === "error" ? "error" : "muted"}
+                size="xs"
+              >
+                {languageServerLabel(messages, languageServer)}
+              </Text>
+            )}
             <Flex align="center" gap="xs">
               <Text as="span" color="muted" size="xs">
                 {question.answerFileName}

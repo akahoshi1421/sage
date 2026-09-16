@@ -1,3 +1,5 @@
+import { pathToFileURL } from "node:url";
+
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -66,7 +68,8 @@ export const getQuestionPageData = createServerFn({ method: "GET" })
         readQuestionDetail(paths, slug, solved.has(numberFromSlug(slug))),
         listQuestionSummaries(paths, solved),
       ]);
-      return { question, questions };
+      // エディタのモデルや言語サーバーには実パスの file:// URI を渡す
+      return { question, questions, rootUri: pathToFileURL(paths.root).href };
     });
   });
 

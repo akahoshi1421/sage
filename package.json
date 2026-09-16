@@ -62,6 +62,8 @@
     "remark-gfm": "^4.0.1",
     "shiki": "^4.4.3",
     "srvx": "^1.0.5",
+    "vscode-jsonrpc": "^9.0.2",
+    "ws": "^8.21.3",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -77,6 +79,7 @@
     "@types/node": "^26.5.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^6.1.1",
     "cross-env": "^10.1.0",
     "drizzle-kit": "^0.31.10",

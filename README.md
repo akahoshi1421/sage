@@ -124,6 +124,23 @@ export async function setup({ monaco, project }) {
 
 アダプタの中で `import` できるのは URL だけです (npm パッケージ名は解決できません)。失敗はブラウザのコンソールに出て、エディタ自体はそのまま使えます。
 
+#### 言語サーバー (LSP) の中継
+
+言語サーバーがある言語では、`languageServers` に Monaco の言語 ID ごとの起動コマンドを書くと、sage がプロジェクトのルートでそのコマンドを起動し、`/_sage/lsp/{言語 ID}` の WebSocket でエディタと中継します。補完・ホバー・シグネチャ・エラー表示が言語サーバーのものになります。コマンドの用意 (`pip install pyright`、`go install golang.org/x/tools/gopls@latest`、`brew install llvm` など) は利用者側の仕事です。
+
+```js
+export const languageServers = {
+  python: { command: "pyright-langserver", args: ["--stdio"] },
+  go: { command: "gopls" },
+  c: { command: "clangd" },
+  rust: { command: "rust-analyzer" },
+};
+```
+
+- 起動するコマンドはプロジェクトの `sage.editor.js` からだけ決まります (ブラウザからは指定できません)。このファイルはサーバー側 (Node) でも読み込むので、トップレベルにブラウザ専用の処理を書かないでください。
+- 接続は言語ごとに 1 本で、問題を切り替えると `didOpen` / `didClose` で開くファイルを変えます。編集内容は保存前でもそのまま言語サーバーに送られます。
+- 回答バーに接続状態 (接続中 / 接続済み / 使えません) が出ます。起動に失敗した理由はサーバーのターミナルにも出ます。
+
 ### 採点コマンドの契約
 
 Web 版の「回答」ボタンは、プロジェクトのルートで `claude -p "/sage-mark {番号}"` (codex なら `codex exec "$sage-mark {番号}"`) を実行し、出力の最後にある次の形式の行を判定として読み取ります。

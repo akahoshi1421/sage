@@ -7,6 +7,7 @@
  *   question は { number, slug, difficulty, title, answerFileName, answerFilePath, language (Monaco の言語 ID) }
  *
  * project でプロジェクト内のファイルを読める (プロジェクトの外は読めない):
+ * - project.rootUri: プロジェクトのルートの file:// URI
  * - project.readFiles(dir, suffixes): dir 以下で名前が suffixes のどれかで終わるファイルを { 相対パス: 内容 } で返す
  * - project.readFile(path): 1 ファイルの内容 (無ければ null)
  *
@@ -16,13 +17,27 @@
  * 環境をどう用意し、エディタに何を反映するかはこのファイルを書く側 (AI エージェント) が決める。
  */
 
+/**
+ * 言語サーバー (LSP) を使う言語は、Monaco の言語 ID ごとに起動コマンドを書く。
+ * sage がプロジェクトのルートでそのコマンドを起動し、エディタと中継する (補完・ホバー・シグネチャ・エラー表示が本物になる)。
+ * コマンド自体は入れておくこと (例: pip install pyright / go install golang.org/x/tools/gopls@latest / brew install llvm)。
+ */
+export const languageServers = {
+  // python: { command: "pyright-langserver", args: ["--stdio"] },
+  // go: { command: "gopls" },
+  // c: { command: "clangd" },
+  // cpp: { command: "clangd" },
+  // rust: { command: "rust-analyzer" },
+  // typescript: { command: "typescript-language-server", args: ["--stdio"] },
+};
+
 export async function setup({ monaco, project }) {
   // 例: TypeScript/JavaScript のライブラリ (ここでは zod) の型定義を読み込み、import の補完と型チェックを効かせる。
-  // 回答ファイルは file:///questions/... として開かれるので、file:///node_modules/... に置けば Node と同じ解決になる。
+  // 回答ファイルは実パス (project.rootUri の下) の file:// URI で開かれるので、同じ規則で node_modules に置けば Node と同じ解決になる。
   //
   // const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
   // for (const [file, content] of Object.entries(files)) {
-  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `file:///${file}`);
+  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `${project.rootUri}/${file}`);
   // }
   // const ts = monaco.languages.typescript;
   // ts.typescriptDefaults.setCompilerOptions({

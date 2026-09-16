@@ -35,7 +35,8 @@ export type TextProps = Omit<ComponentPropsWithoutRef<"p">, "color" | "style"> &
     | "dt"
     | "dd"
     | "time"
-    | "figcaption";
+    | "figcaption"
+    | "output";
   /** 文字サイズ (xs: 14px 密 / sm: 16px 密 / md: 16px 本文 / lg: 18px / xl: 20px)。未指定なら親から継承 */
   size?: TextSize;
   /** 太さ。size と組み合わせて使う (size 未指定で bold だけ指定した場合は md 相当) */

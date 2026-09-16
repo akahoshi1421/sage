@@ -63,6 +63,14 @@ describe("回答ページ", () => {
     expect(screen.getByText("answer.vue")).toBeInTheDocument();
   });
 
+  it("言語サーバーが宣言されていると回答バーに接続状態が表示される", () => {
+    // Arrange
+    renderPage({ languageServer: { state: "error", command: "clangd", reason: "spawn ENOENT" } });
+
+    // Assert
+    expect(screen.getByRole("status")).toHaveTextContent("clangd を使えません: spawn ENOENT");
+  });
+
   it("保存済みならファイル名の横に印は出ない", () => {
     // Arrange
     renderPage();

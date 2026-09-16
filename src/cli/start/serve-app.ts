@@ -1,8 +1,11 @@
+import { Server } from "node:http";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 import { serve } from "srvx";
 import { staticMiddleware } from "srvx/static";
+
+import { attachLspBridge } from "#/server/lsp/bridge";
 
 export type ServeAppOptions = {
   /** sage パッケージのルート (dist/ がある場所) */
@@ -31,5 +34,7 @@ export async function serveApp({
     fetch: (request) => entry.default.fetch(request),
   });
   await server.ready();
+  const nodeServer = server.node?.server;
+  if (nodeServer instanceof Server) attachLspBridge(nodeServer, { root: projectRoot });
   return server.url ?? `http://127.0.0.1:${port}/`;
 }

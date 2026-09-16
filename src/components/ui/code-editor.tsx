@@ -1,5 +1,6 @@
 import { chakra } from "@chakra-ui/react";
-import MonacoEditor, { type Monaco, type OnMount } from "@monaco-editor/react";
+import MonacoEditor, { type OnMount } from "@monaco-editor/react";
+import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useIsClient } from "./hooks/use-is-client";
@@ -28,9 +29,10 @@ const Placeholder = chakra("output", {
   },
 });
 
+/** Monaco の API 全体 (`monaco.languages` や `monaco.editor` など) */
+export type Monaco = typeof import("monaco-editor");
 /** Monaco のエディタが用意できたときに呼ばれる (editor と monaco の API を受け取る) */
-export type CodeEditorMount = OnMount;
-export type { Monaco };
+export type CodeEditorMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void;
 
 export type CodeEditorProps = {
   /** エディタの内容 (制御コンポーネント) */

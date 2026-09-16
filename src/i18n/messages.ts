@@ -33,6 +33,11 @@ export const messages = {
       save: "保存",
       saved: "保存しました",
       unsaved: "未保存の変更があります (⌘S / Ctrl+S で保存)",
+      languageServer: {
+        connecting: (command: string) => `${command} に接続中…`,
+        ready: (command: string) => `${command} に接続済み`,
+        error: (command: string, reason: string) => `${command} を使えません: ${reason}`,
+      },
       reset: "リセット",
       resetConfirmTitle: "回答をリセットしますか？",
       resetConfirm: "リセットする",
@@ -85,6 +90,11 @@ export const messages = {
       save: "Save",
       saved: "Saved",
       unsaved: "Unsaved changes (Cmd+S / Ctrl+S to save)",
+      languageServer: {
+        connecting: (command: string) => `Connecting to ${command}…`,
+        ready: (command: string) => `Connected to ${command}`,
+        error: (command: string, reason: string) => `${command} is unavailable: ${reason}`,
+      },
       reset: "Reset",
       resetConfirmTitle: "Reset your answer?",
       resetConfirm: "Reset",

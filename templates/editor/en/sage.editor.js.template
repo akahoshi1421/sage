@@ -7,6 +7,7 @@
  *   question is { number, slug, difficulty, title, answerFileName, answerFilePath, language (Monaco language id) }
  *
  * project reads files inside the project (nothing outside it):
+ * - project.rootUri: the file:// URI of the project root
  * - project.readFiles(dir, suffixes): files under dir whose name ends with one of suffixes, as { relativePath: content }
  * - project.readFile(path): the content of one file (null when missing)
  *
@@ -17,13 +18,27 @@
  * environment and what to reflect in the editor.
  */
 
+/**
+ * For languages with a language server (LSP), map the Monaco language id to the command that starts it.
+ * sage starts the command at the project root and relays it to the editor (real completion, hover, signatures, diagnostics).
+ * Install the command yourself (e.g. pip install pyright / go install golang.org/x/tools/gopls@latest / brew install llvm).
+ */
+export const languageServers = {
+  // python: { command: "pyright-langserver", args: ["--stdio"] },
+  // go: { command: "gopls" },
+  // c: { command: "clangd" },
+  // cpp: { command: "clangd" },
+  // rust: { command: "rust-analyzer" },
+  // typescript: { command: "typescript-language-server", args: ["--stdio"] },
+};
+
 export async function setup({ monaco, project }) {
   // Example: load the type definitions of a TypeScript/JavaScript library (zod here) so imports get completion and type checking.
-  // Answer files are opened as file:///questions/..., so placing the types under file:///node_modules/... gives Node-style resolution.
+  // Answer files are opened with their real file:// URI (under project.rootUri), so placing the types under node_modules the same way gives Node-style resolution.
   //
   // const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
   // for (const [file, content] of Object.entries(files)) {
-  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `file:///${file}`);
+  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `${project.rootUri}/${file}`);
   // }
   // const ts = monaco.languages.typescript;
   // ts.typescriptDefaults.setCompilerOptions({

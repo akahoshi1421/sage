@@ -9,6 +9,7 @@ import {
   type Subject,
 } from "#/features/questions/types";
 
+import { languageOf } from "../editor/language-of";
 import type { ProjectPaths } from "../paths";
 import { splitLeadingHeading } from "./markdown";
 
@@ -132,6 +133,8 @@ export async function readQuestionDetail(
   paths: ProjectPaths,
   slug: string,
   solved: boolean,
+  /** 拡張子 → 言語 ID の宣言 (sage.editor.js の languages) */
+  languages: Record<string, string> = {},
 ): Promise<QuestionDetail | null> {
   const directory = await findQuestionDirectory(paths, slug);
   if (!directory) return null;
@@ -161,6 +164,7 @@ export async function readQuestionDetail(
     templateCode,
     answerFileName: files.answerFileName,
     answerFilePath: path.relative(paths.root, files.answerFile).split(path.sep).join("/"),
+    language: languageOf(files.answerFileName, languages),
     answerCode,
   };
 }

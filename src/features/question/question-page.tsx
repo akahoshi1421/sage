@@ -12,7 +12,6 @@ import {
   Flex,
   HamburgerMenuButton,
   Heading,
-  languageFromFilename,
   Markdown,
   Splitter,
   StatusBadge,
@@ -117,7 +116,7 @@ export function QuestionPage({
       <Box flex="1" minH="0">
         <CodeEditor
           value={code}
-          language={languageFromFilename(question.answerFileName)}
+          language={question.language}
           onChange={onCodeChange}
           onSave={onSave}
           onMount={onEditorMount}

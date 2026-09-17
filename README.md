@@ -91,7 +91,22 @@ docs/              設計ドキュメント
 
 ### エディタのアダプタ (`sage.editor.js`)
 
-Web 版のエディタは Monaco Editor です。そのままでは学習対象のライブラリ (例: zod) の型を知らないので import の補完や型チェックが効きません。プロジェクトのルートに `sage.editor.js` (ES モジュール) を置くと、ブラウザで読み込まれて Monaco を自由に設定できます。sage は Monaco を渡すだけで、言語や技術の入れ方 (npm / pip / cargo / tar.gz など) を仮定しません。環境の用意とエディタへの反映は利用者側の AI エージェントの仕事で、`sage create` がコメント付きの雛形を書き出し、`/sage-create` が対象の技術に合わせて中身を整えます。
+Web 版のエディタは Monaco Editor です。sage は言語を知りません。言語サーバー (LSP) があればそれにつないで補完・ホバー・エラー表示・色付けを言語サーバーから得て、無ければ素のエディタで動きます (採点は AI が行うので学習は成立します)。プロジェクトのルートの `sage.editor.js` (ES モジュール) で足りない情報を宣言します。環境 (言語、言語サーバー) を入れるのは利用者側の AI エージェントの仕事で、`sage create` がコメント付きの雛形を書き出し、`/sage-create` が対象の技術に合わせて中身を整えます。
+
+```js
+// sage が知らない拡張子 → Monaco の言語 ID (一般的な言語は不要)
+export const languages = { mbt: "moonbit" };
+// 言語サーバーの起動コマンド (PATH にある既定の候補で足りるなら不要)
+export const languageServers = { moonbit: { command: "moon", args: ["lsp"] } };
+```
+
+| export            | 役割                                                                                                                                                        |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `languages`       | 拡張子 (ドット無し) → 言語 ID。sage の表 (`.py` → `python` など約 40 個) より優先。未知の言語 ID は Monaco に登録され、言語サーバーの `languageId` にも使う |
+| `languageServers` | 言語 ID → `{ command, args }`。宣言が無い言語は既定の候補 (下記) のうち PATH にあるものを使う                                                               |
+| `setup` / `open`  | 上級者向け。Monaco を直接設定する (下記)                                                                                                                    |
+
+#### setup / open (上級者向け)
 
 | export                                        | 呼ばれるとき                                                                                       |
 | --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -126,7 +141,9 @@ export async function setup({ monaco, project }) {
 
 #### 言語サーバー (LSP) の中継
 
-言語サーバーがある言語では、`languageServers` に Monaco の言語 ID ごとの起動コマンドを書くと、sage がプロジェクトのルートでそのコマンドを起動し、`/_sage/lsp/{言語 ID}` の WebSocket でエディタと中継します。補完・ホバー・シグネチャ・エラー表示が言語サーバーのものになります。コマンドの用意 (`pip install pyright`、`go install golang.org/x/tools/gopls@latest`、`brew install llvm` など) は利用者側の仕事です。
+言語サーバーがある言語では、sage がプロジェクトのルートでそのコマンドを起動し、`/_sage/lsp/{言語 ID}` の WebSocket でエディタと中継します。補完・ホバー・シグネチャ・エラー表示に加えて、セマンティックトークンによる色付けも言語サーバーから得るので、Monaco が文法を持たない言語でも色が付きます。コマンドの用意 (`pip install pyright`、`go install golang.org/x/tools/gopls@latest`、`brew install llvm` など) は利用者側の仕事です。
+
+宣言が無い言語は既定の候補のうち PATH にあるものを使います: python (pyright-langserver, pylsp)、go (gopls)、c / cpp (clangd)、rust (rust-analyzer)、typescript / javascript (typescript-language-server)、java (jdtls)、kotlin、csharp (csharp-ls)、ruby (ruby-lsp, solargraph)、php (intelephense)、swift (sourcekit-lsp)、dart、scala (metals)、shell (bash-language-server)、html / css / json (vscode-*-language-server)、yaml。PATH に無いコマンド (pip の user install など) や既定に無い言語は `languageServers` に書きます。
 
 ```js
 export const languageServers = {

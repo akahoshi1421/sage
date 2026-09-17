@@ -30,6 +30,10 @@ class FakeSocket extends EventTarget {
   }
 }
 
+type SemanticTokensProvider = {
+  getLegend: () => { tokenTypes: string[]; tokenModifiers: string[] };
+  provideDocumentSemanticTokens: (model: unknown) => Promise<{ data: Uint32Array } | null>;
+};
 type CompletionProvider = {
   provideCompletionItems: (
     model: unknown,
@@ -40,6 +44,7 @@ type CompletionProvider = {
 /** プロバイダの登録と診断の反映だけを持つ偽の Monaco */
 function fakeMonaco() {
   const providers: Record<string, CompletionProvider> = {};
+  const semanticProviders: Record<string, SemanticTokensProvider> = {};
   const setModelMarkers = vi.fn<(model: unknown, owner: string, markers: unknown[]) => void>();
   const models: Array<{ uri: { path: string; toString: () => string } }> = [];
   const monaco = {
@@ -48,6 +53,12 @@ function fakeMonaco() {
         (language: string, provider: CompletionProvider) => { dispose: () => void }
       >((language, provider) => {
         providers[language] = provider;
+        return { dispose: () => {} };
+      }),
+      registerDocumentSemanticTokensProvider: vi.fn<
+        (language: string, provider: SemanticTokensProvider) => { dispose: () => void }
+      >((language, provider) => {
+        semanticProviders[language] = provider;
         return { dispose: () => {} };
       }),
       registerHoverProvider: vi.fn<() => { dispose: () => void }>(() => ({ dispose: () => {} })),
@@ -66,7 +77,13 @@ function fakeMonaco() {
     MarkerSeverity: { Error: 8, Warning: 4, Info: 2, Hint: 1 },
     Uri: { parse: (value: string) => ({ toString: () => value, path: new URL(value).pathname }) },
   };
-  return { monaco: monaco as unknown as Monaco, providers, setModelMarkers, models };
+  return {
+    monaco: monaco as unknown as Monaco,
+    providers,
+    semanticProviders,
+    setModelMarkers,
+    models,
+  };
 }
 
 function fakeModel(uri: string, text: string) {
@@ -118,6 +135,49 @@ describe("言語サーバーとの接続", () => {
     expect(socket.sent[1]).toMatchObject({ method: "initialized" });
     expect(providers.c).toBeDefined();
     expect(monaco.languages.registerHoverProvider).not.toHaveBeenCalled();
+  });
+
+  it("サーバーがセマンティックトークンに対応していれば、その種別で色付けするプロバイダが登録される", async () => {
+    // Arrange
+    const socket = new FakeSocket();
+    const { monaco, semanticProviders } = fakeMonaco();
+    const connecting = LanguageClient.connect({
+      monaco,
+      socket: socket as unknown as WebSocket,
+      language: "moonbit",
+      rootUri: "file:///Users/me/learn",
+    });
+    socket.open();
+    await flush();
+    socket.reply("initialize", {
+      capabilities: {
+        semanticTokensProvider: {
+          legend: { tokenTypes: ["keyword", "function"], tokenModifiers: [] },
+          full: true,
+        },
+      },
+    });
+    await connecting;
+    const model = fakeModel(
+      "file:///Users/me/learn/questions/warm-up/1-hello/answer.mbt",
+      "fn main {}",
+    );
+
+    // Act
+    const providing = semanticProviders.moonbit?.provideDocumentSemanticTokens(model);
+    await flush();
+    socket.reply("textDocument/semanticTokens/full", { data: [0, 0, 2, 0, 0, 0, 3, 4, 1, 0] });
+    const tokens = await providing;
+
+    // Assert
+    expect(socket.sent[0]).toMatchObject({
+      params: { capabilities: { textDocument: { semanticTokens: { requests: { full: true } } } } },
+    });
+    expect(semanticProviders.moonbit?.getLegend()).toEqual({
+      tokenTypes: ["keyword", "function"],
+      tokenModifiers: [],
+    });
+    expect(tokens?.data).toEqual(new Uint32Array([0, 0, 2, 0, 0, 0, 3, 4, 1, 0]));
   });
 
   it("開いたファイルは didOpen/didChange で同期され、補完と診断が Monaco に反映される", async () => {

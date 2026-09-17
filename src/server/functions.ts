@@ -7,6 +7,8 @@ import type { MarkResult } from "#/features/questions/types";
 
 import { loadConfig } from "./config";
 import { readProjectFile, readProjectFiles } from "./editor/project-files";
+import { EMPTY_EDITOR_SETTINGS, loadEditorSettings } from "./lsp/editor-settings";
+import { resolveLanguageServer } from "./lsp/language-servers";
 import { MarkError, markQuestion } from "./marking/mark";
 import { EDITOR_ADAPTER_FILE, resolveProjectPaths } from "./paths";
 import { openProgressDb } from "./progress/db";
@@ -37,6 +39,18 @@ async function withProgressDb<T>(
   }
 }
 
+/** sage.editor.js の宣言を読む。壊れていてもページは出す (理由はターミナルに出し、言語サーバーの接続時にも伝わる) */
+async function loadEditorSettingsSafely(root: string) {
+  try {
+    return await loadEditorSettings(root);
+  } catch (error) {
+    console.error(
+      `[sage] sage.editor.js を読めません: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return EMPTY_EDITOR_SETTINGS;
+  }
+}
+
 /** 表示言語などアプリ全体で使う設定 */
 export const getAppContext = createServerFn({ method: "GET" }).handler(async () => {
   const paths = resolveProjectPaths();
@@ -62,14 +76,21 @@ export const getQuestionPageData = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => slugSchema.parse(input))
   .handler(async ({ data: slug }) => {
     const paths = resolveProjectPaths();
+    const settings = await loadEditorSettingsSafely(paths.root);
     return withProgressDb(paths.dbFile, async (db) => {
       const solved = await listSolvedNumbers(db);
       const [question, questions] = await Promise.all([
-        readQuestionDetail(paths, slug, solved.has(numberFromSlug(slug))),
+        readQuestionDetail(paths, slug, solved.has(numberFromSlug(slug)), settings.languages),
         listQuestionSummaries(paths, solved),
       ]);
-      // エディタのモデルや言語サーバーには実パスの file:// URI を渡す
-      return { question, questions, rootUri: pathToFileURL(paths.root).href };
+      return {
+        question,
+        questions,
+        // エディタのモデルや言語サーバーには実パスの file:// URI を渡す
+        rootUri: pathToFileURL(paths.root).href,
+        // この問題の言語に使う言語サーバー (宣言か既定の候補。無ければ null で素のエディタ)
+        languageServer: question ? resolveLanguageServer(settings, question.language) : null,
+      };
     });
   });
 

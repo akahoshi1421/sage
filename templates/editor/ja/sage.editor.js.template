@@ -1,68 +1,44 @@
 /**
- * sage の Web エディタ (Monaco Editor) を学習対象に合わせて整えるアダプタ。
- * このファイルは省略可能で、あるときだけブラウザで ES モジュールとして読み込まれる。
+ * sage の Web エディタ (Monaco Editor) を学習対象に合わせるための宣言。省略可。
+ * ブラウザと sage のサーバーの両方で ES モジュールとして読み込むので、トップレベルにはブラウザ専用の処理を書かない。
  *
- * - setup({ monaco, project }): Monaco が読み込まれたときに 1 回呼ばれる。型定義の登録や言語の追加はここで行う
- * - open({ monaco, editor, project, question }): 問題を開くたびに呼ばれる。エディタ (IStandaloneCodeEditor) の設定はここで行う
- *   question は { number, slug, difficulty, title, answerFileName, answerFilePath, language (Monaco の言語 ID) }
- *
- * project でプロジェクト内のファイルを読める (プロジェクトの外は読めない):
- * - project.rootUri: プロジェクトのルートの file:// URI
- * - project.readFiles(dir, suffixes): dir 以下で名前が suffixes のどれかで終わるファイルを { 相対パス: 内容 } で返す
- * - project.readFile(path): 1 ファイルの内容 (無ければ null)
- *
- * import できるのは URL だけ (npm パッケージ名は解決できない)。エラーはブラウザのコンソールに出る。
- *
- * sage は Monaco をそのまま渡すだけで、言語や技術 (npm / pip / cargo / tar.gz で入れたものなど) を仮定しない。
- * 環境をどう用意し、エディタに何を反映するかはこのファイルを書く側 (AI エージェント) が決める。
+ * 基本方針: sage は言語を知らない。言語サーバー (LSP) があればそれにつなぎ、無ければ素のエディタで動く (学習は成立する)。
+ * 補完や色付けを自作する必要はない。
  */
 
 /**
- * 言語サーバー (LSP) を使う言語は、Monaco の言語 ID ごとに起動コマンドを書く。
- * sage がプロジェクトのルートでそのコマンドを起動し、エディタと中継する (補完・ホバー・シグネチャ・エラー表示が本物になる)。
- * コマンド自体は入れておくこと (例: pip install pyright / go install golang.org/x/tools/gopls@latest / brew install llvm)。
+ * sage が知らない拡張子 (ドット無し) → Monaco の言語 ID。
+ * 一般的な言語 (.py .go .rs .c .ts など) は宣言しなくてよい。宣言した言語 ID はエディタと言語サーバーの両方に使う。
  */
-export const languageServers = {
-  // python: { command: "pyright-langserver", args: ["--stdio"] },
-  // go: { command: "gopls" },
-  // c: { command: "clangd" },
-  // cpp: { command: "clangd" },
-  // rust: { command: "rust-analyzer" },
-  // typescript: { command: "typescript-language-server", args: ["--stdio"] },
+export const languages = {
+  // mbt: "moonbit",
 };
 
-export async function setup({ monaco, project }) {
-  // 例: TypeScript/JavaScript のライブラリ (ここでは zod) の型定義を読み込み、import の補完と型チェックを効かせる。
-  // 回答ファイルは実パス (project.rootUri の下) の file:// URI で開かれるので、同じ規則で node_modules に置けば Node と同じ解決になる。
-  //
-  // const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
-  // for (const [file, content] of Object.entries(files)) {
-  //   monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `${project.rootUri}/${file}`);
-  // }
-  // const ts = monaco.languages.typescript;
-  // ts.typescriptDefaults.setCompilerOptions({
-  //   ...ts.typescriptDefaults.getCompilerOptions(),
-  //   module: ts.ModuleKind.ESNext,
-  //   moduleResolution: ts.ModuleResolutionKind.NodeJs,
-  //   target: ts.ScriptTarget.ES2022,
-  //   strict: true,
-  // });
-}
+/**
+ * 言語サーバーの起動コマンド (Monaco の言語 ID ごと)。sage がプロジェクトのルートで起動し、エディタと中継する。
+ * 宣言が無い言語は既定の候補 (python: pyright-langserver、go: gopls、c/cpp: clangd、rust: rust-analyzer、
+ * typescript: typescript-language-server など) のうち PATH にあるものを使うので、入れておけば宣言は不要。
+ * PATH に無いコマンドや既定に無い言語だけここに書く。
+ */
+export const languageServers = {
+  // python: { command: "python3", args: ["-m", "pyright.langserver", "--stdio"] },
+  // moonbit: { command: "moon", args: ["lsp"] },
+};
 
-export async function open({ monaco, editor, project, question }) {
-  // 例: 言語サーバーの無い言語 (Python など) で、プロジェクト内に用意した一覧から補完を出す
-  //
-  // if (question.language === "python") {
-  //   editor.updateOptions({ tabSize: 4 });
-  //   const symbols = JSON.parse((await project.readFile("editor/python-symbols.json")) ?? "[]");
-  //   monaco.languages.registerCompletionItemProvider("python", {
-  //     provideCompletionItems: () => ({
-  //       suggestions: symbols.map((label) => ({
-  //         label,
-  //         kind: monaco.languages.CompletionItemKind.Function,
-  //         insertText: label,
-  //       })),
-  //     }),
-  //   });
-  // }
-}
+/*
+ * 以下は上級者向けで、通常は不要。
+ * - setup({ monaco, project }): Monaco 読み込み時に 1 回。型定義の登録など
+ * - open({ monaco, editor, project, question }): 問題を開くたび。エディタ (IStandaloneCodeEditor) の設定
+ *   question は { number, slug, difficulty, title, answerFileName, answerFilePath, language }
+ * - project: { rootUri, readFiles(dir, suffixes), readFile(path) } でプロジェクト内のファイルを読める (外は読めない)
+ * import できるのは URL だけ。失敗はブラウザのコンソールに出る。
+ *
+ * 例: 言語サーバーを使わずに npm パッケージの型定義を Monaco の TypeScript に登録する
+ *
+ * export async function setup({ monaco, project }) {
+ *   const files = await project.readFiles("node_modules/zod", [".d.ts", ".d.cts", "package.json"]);
+ *   for (const [file, content] of Object.entries(files)) {
+ *     monaco.languages.typescript.typescriptDefaults.addExtraLib(content, `${project.rootUri}/${file}`);
+ *   }
+ * }
+ */

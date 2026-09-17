@@ -27,11 +27,53 @@ export type LanguageClientOptions = {
   rootUri: string;
 };
 
+type SemanticTokensLegend = { tokenTypes: string[]; tokenModifiers: string[] };
+
 type ServerCapabilities = {
   completionProvider?: { triggerCharacters?: string[]; resolveProvider?: boolean };
   hoverProvider?: boolean | object;
   signatureHelpProvider?: { triggerCharacters?: string[]; retriggerCharacters?: string[] };
+  semanticTokensProvider?: { legend: SemanticTokensLegend; full?: boolean | object };
 };
+
+/** LSP 3.17 の標準のトークン種別と修飾子 (独自の種別は色が付かないだけ) */
+const SEMANTIC_TOKEN_TYPES = [
+  "namespace",
+  "type",
+  "class",
+  "enum",
+  "interface",
+  "struct",
+  "typeParameter",
+  "parameter",
+  "variable",
+  "property",
+  "enumMember",
+  "event",
+  "function",
+  "method",
+  "macro",
+  "keyword",
+  "modifier",
+  "comment",
+  "string",
+  "number",
+  "regexp",
+  "operator",
+  "decorator",
+];
+const SEMANTIC_TOKEN_MODIFIERS = [
+  "declaration",
+  "definition",
+  "readonly",
+  "static",
+  "deprecated",
+  "abstract",
+  "async",
+  "modification",
+  "documentation",
+  "defaultLibrary",
+];
 
 const MARKER_OWNER = "sage-lsp";
 
@@ -105,6 +147,12 @@ export class LanguageClient {
               },
             },
             publishDiagnostics: {},
+            semanticTokens: {
+              requests: { full: true },
+              tokenTypes: SEMANTIC_TOKEN_TYPES,
+              tokenModifiers: SEMANTIC_TOKEN_MODIFIERS,
+              formats: ["relative"],
+            },
           },
           workspace: { workspaceFolders: true, configuration: true },
         },
@@ -264,8 +312,33 @@ export class LanguageClient {
     };
   }
 
+  /** 言語サーバーのトークン種別で色を付ける (Monarch 文法の無い言語でも色が付く)。LSP と Monaco は同じ相対エンコード */
+  private semanticTokensProvider(
+    legend: SemanticTokensLegend,
+  ): languages.DocumentSemanticTokensProvider {
+    return {
+      getLegend: () => legend,
+      provideDocumentSemanticTokens: async (model) => {
+        const result = await this.rpc.request<{ data: number[] } | null>(
+          "textDocument/semanticTokens/full",
+          { textDocument: textDocument(model) },
+        );
+        return result ? { data: new Uint32Array(result.data) } : null;
+      },
+      releaseDocumentSemanticTokens: () => {},
+    };
+  }
+
   private registerProviders(capabilities: ServerCapabilities) {
     const { monaco, language } = this.options;
+    if (capabilities.semanticTokensProvider?.full) {
+      this.disposables.push(
+        monaco.languages.registerDocumentSemanticTokensProvider(
+          language,
+          this.semanticTokensProvider(capabilities.semanticTokensProvider.legend),
+        ),
+      );
+    }
     if (capabilities.completionProvider) {
       this.disposables.push(
         monaco.languages.registerCompletionItemProvider(

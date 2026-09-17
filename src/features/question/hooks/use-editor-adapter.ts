@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { type CodeEditorMount, languageFromFilename } from "#/components/ui";
+import type { CodeEditorMount, Monaco } from "#/components/ui";
 import type { QuestionDetail } from "#/features/questions/types";
 import { getEditorAdapterFn, readProjectFileFn, readProjectFilesFn } from "#/server/functions";
 
@@ -12,7 +12,7 @@ import {
   loadEditorAdapter,
 } from "../utils/load-editor-adapter";
 
-/** 言語サーバーの接続状態 (回答バーに表示する) */
+/** 言語サーバーの接続状態 (回答バーに表示する)。command は表示用 (引数込み) */
 export type LanguageServerStatus =
   | { state: "connecting"; command: string }
   | { state: "ready"; command: string }
@@ -32,11 +32,7 @@ const languageServerUrl = (language: string) =>
   `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/_sage/lsp/${encodeURIComponent(language)}`;
 
 /** 言語ごとに 1 本だけ接続する。切れたら次回つなぎ直す */
-const connectLanguageServer = (
-  monaco: Parameters<CodeEditorMount>[1],
-  language: string,
-  rootUri: string,
-) => {
+const connectLanguageServer = (monaco: Monaco, language: string, rootUri: string) => {
   let client = clients.get(language);
   if (!client) {
     client = LanguageClient.connect({
@@ -53,25 +49,50 @@ const connectLanguageServer = (
   return client;
 };
 
+/** sage (Monaco) が知らない言語 ID なら登録し、モデルの言語をそれにする (色付けは無いが LSP は使える) */
+const ensureLanguage = (
+  monaco: Monaco,
+  question: QuestionDetail,
+  model: ReturnType<Monaco["editor"]["getModels"]>[number],
+) => {
+  if (!monaco.languages.getLanguages().some((known) => known.id === question.language)) {
+    const extension = question.answerFileName.slice(question.answerFileName.lastIndexOf("."));
+    monaco.languages.register({ id: question.language, extensions: [extension] });
+  }
+  if (model.getLanguageId() !== question.language) {
+    monaco.editor.setModelLanguage(model, question.language);
+  }
+};
+
 const errorReason = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
 /**
- * プロジェクトの `sage.editor.js` (あれば) を Monaco に適用し、宣言された言語サーバーにつなぐ。
+ * プロジェクトの `sage.editor.js` (あれば) を Monaco に適用し、言語サーバー (あれば) につなぐ。
  * `onMount` をエディタに渡す。アダプタの失敗はコンソールに出す (エディタ自体は使える)。
  */
-export function useEditorAdapter(question: QuestionDetail, rootUri: string) {
-  const [languageServer, setLanguageServer] = useState<LanguageServerStatus | null>(null);
+export function useEditorAdapter(
+  question: QuestionDetail,
+  rootUri: string,
+  /** この問題の言語に使う言語サーバー (サーバー側で宣言か既定から決めたもの)。null なら素のエディタ */
+  languageServer: LanguageServerSpec | null,
+) {
+  const [status, setStatus] = useState<LanguageServerStatus | null>(null);
 
   const onMount = useCallback<CodeEditorMount>(
     (editor, monaco) => {
-      const language = languageFromFilename(question.answerFileName);
+      const { language } = question;
+      const model = editor.getModel();
+      if (model) ensureLanguage(monaco, question, model);
+
       const project: EditorProject = {
         rootUri,
         readFiles: (dir, suffixes) => readProjectFilesFn({ data: { dir, suffixes } }),
         readFile: async (file) => (await readProjectFileFn({ data: file })).content,
       };
 
-      const applyAdapter = async (adapter: EditorAdapter) => {
+      const applyAdapter = async () => {
+        const adapter = await loadAdapterOnce();
+        if (!adapter) return;
         await (setupPromise ??= Promise.resolve(adapter.setup?.({ monaco, project })));
         await adapter.open?.({
           monaco,
@@ -90,38 +111,25 @@ export function useEditorAdapter(question: QuestionDetail, rootUri: string) {
       };
 
       const attachLanguageServer = async (spec: LanguageServerSpec) => {
-        setLanguageServer({ state: "connecting", command: spec.command });
+        const command = [spec.command, ...(spec.args ?? [])].join(" ");
+        setStatus({ state: "connecting", command });
         try {
           const client = await connectLanguageServer(monaco, language, rootUri);
-          const model = editor.getModel();
-          if (model) {
-            const detach = client.attach(model);
-            editor.onDidDispose(detach);
-          }
-          client.onDidClose((reason) =>
-            setLanguageServer({ state: "error", command: spec.command, reason }),
-          );
-          setLanguageServer({ state: "ready", command: spec.command });
+          if (model) editor.onDidDispose(client.attach(model));
+          client.onDidClose((reason) => setStatus({ state: "error", command, reason }));
+          setStatus({ state: "ready", command });
         } catch (error) {
-          setLanguageServer({ state: "error", command: spec.command, reason: errorReason(error) });
+          setStatus({ state: "error", command, reason: errorReason(error) });
         }
       };
 
-      const run = async () => {
-        const adapter = await loadAdapterOnce();
-        if (!adapter) return;
-        const spec = adapter.languageServers?.[language];
-        await Promise.all([
-          applyAdapter(adapter),
-          spec?.command ? attachLanguageServer(spec) : undefined,
-        ]);
-      };
-      run().catch((error: unknown) => {
+      applyAdapter().catch((error: unknown) => {
         console.error("sage.editor.js の適用に失敗しました", error);
       });
+      if (languageServer) void attachLanguageServer(languageServer);
     },
-    [question, rootUri],
+    [question, rootUri, languageServer],
   );
 
-  return { onMount, languageServer };
+  return { onMount, languageServer: status };
 }

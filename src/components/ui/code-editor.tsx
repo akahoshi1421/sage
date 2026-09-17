@@ -1,5 +1,5 @@
 import { chakra } from "@chakra-ui/react";
-import MonacoEditor, { type OnMount } from "@monaco-editor/react";
+import MonacoEditor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -28,6 +28,34 @@ const Placeholder = chakra("output", {
     textStyle: "dns-14N-130",
   },
 });
+
+/** 言語サーバーのセマンティックトークンに付ける色 (VS Code の Light+ 相当)。Monarch の色は vs テーマから継承する */
+const SEMANTIC_TOKEN_RULES = [
+  { token: "namespace", foreground: "267f99" },
+  { token: "type", foreground: "267f99" },
+  { token: "class", foreground: "267f99" },
+  { token: "enum", foreground: "267f99" },
+  { token: "interface", foreground: "267f99" },
+  { token: "struct", foreground: "267f99" },
+  { token: "typeParameter", foreground: "267f99" },
+  { token: "parameter", foreground: "001080" },
+  { token: "variable", foreground: "001080" },
+  { token: "property", foreground: "001080" },
+  { token: "enumMember", foreground: "0070c1" },
+  { token: "function", foreground: "795e26" },
+  { token: "method", foreground: "795e26" },
+  { token: "macro", foreground: "0000ff" },
+  { token: "keyword", foreground: "0000ff" },
+  { token: "modifier", foreground: "0000ff" },
+  { token: "comment", foreground: "008000" },
+  { token: "string", foreground: "a31515" },
+  { token: "number", foreground: "098658" },
+  { token: "regexp", foreground: "811f3f" },
+  { token: "operator", foreground: "000000" },
+  { token: "decorator", foreground: "795e26" },
+];
+
+const THEME = "sage-light";
 
 /** Monaco の API 全体 (`monaco.languages` や `monaco.editor` など) */
 export type Monaco = typeof import("monaco-editor");
@@ -80,6 +108,15 @@ export function CodeEditor({
     onMountRef.current = onMount;
   }, [onMount]);
 
+  const defineTheme = useCallback<BeforeMount>((monaco) => {
+    monaco.editor.defineTheme(THEME, {
+      base: "vs",
+      inherit: true,
+      rules: SEMANTIC_TOKEN_RULES,
+      colors: {},
+    });
+  }, []);
+
   const handleMount = useCallback<OnMount>((editor, monaco) => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       onSaveRef.current?.(editor.getValue());
@@ -97,9 +134,10 @@ export function CodeEditor({
           language={language}
           value={value}
           path={path}
-          theme="light"
+          theme={THEME}
           loading={placeholder}
           onChange={(nextValue) => onChange?.(nextValue ?? "")}
+          beforeMount={defineTheme}
           onMount={handleMount}
           options={{
             readOnly,
@@ -111,6 +149,7 @@ export function CodeEditor({
             scrollBeyondLastLine: false,
             automaticLayout: true,
             padding: { top: 12, bottom: 12 },
+            "semanticHighlighting.enabled": true,
           }}
         />
       ) : (

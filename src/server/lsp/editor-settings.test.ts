@@ -75,14 +75,17 @@ describe("言語サーバーの選択", () => {
   it("PATH に無くても go install や rustup、pip の置き場所は探す", async () => {
     // Arrange: 偽のホームに ~/go/bin/gopls と ~/.cargo/bin/rust-analyzer を置く
     root = await mkdtemp(path.join(os.tmpdir(), "sage-home-"));
-    for (const file of [
-      path.join("go", "bin", "gopls"),
-      path.join(".cargo", "bin", "rust-analyzer"),
-    ]) {
-      await mkdir(path.dirname(path.join(root, file)), { recursive: true });
-      await writeFile(path.join(root, file), "#!/bin/sh\n");
-      await chmod(path.join(root, file), 0o755);
-    }
+    const home = root;
+    await Promise.all(
+      [path.join("go", "bin", "gopls"), path.join(".cargo", "bin", "rust-analyzer")].map(
+        async (file) => {
+          await mkdir(path.dirname(path.join(home, file)), { recursive: true });
+          await writeFile(path.join(home, file), "#!/bin/sh
+");
+          await chmod(path.join(home, file), 0o755);
+        },
+      ),
+    );
     const options = { envPath: "", platform: "darwin" as const, home: root, goPath: undefined };
 
     // Act / Assert

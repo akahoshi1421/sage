@@ -143,7 +143,7 @@ export async function setup({ monaco, project }) {
 
 言語サーバーがある言語では、sage がプロジェクトのルートでそのコマンドを起動し、`/_sage/lsp/{言語 ID}` の WebSocket でエディタと中継します。補完・ホバー・シグネチャ・エラー表示に加えて、セマンティックトークンによる色付けも言語サーバーから得るので、Monaco が文法を持たない言語でも色が付きます。コマンドの用意 (`pip install pyright`、`go install golang.org/x/tools/gopls@latest`、`brew install llvm` など) は利用者側の仕事です。
 
-宣言が無い言語は既定の候補のうち PATH にあるものを使います: python (pyright-langserver, pylsp)、go (gopls)、c / cpp (clangd)、rust (rust-analyzer)、typescript / javascript (typescript-language-server)、java (jdtls)、kotlin、csharp (csharp-ls)、ruby (ruby-lsp, solargraph)、php (intelephense)、swift (sourcekit-lsp)、dart、scala (metals)、shell (bash-language-server)、html / css / json (vscode-*-language-server)、yaml。PATH に無いコマンド (pip の user install など) や既定に無い言語は `languageServers` に書きます。
+宣言が無い言語は既定の候補のうち PATH にあるものを使います: python (pyright-langserver, pylsp)、go (gopls)、c / cpp (clangd)、rust (rust-analyzer)、typescript / javascript (typescript-language-server)、java (jdtls)、kotlin、csharp (csharp-ls)、ruby (ruby-lsp, solargraph)、php (intelephense)、swift (sourcekit-lsp)、dart、scala (metals)、shell (bash-language-server)、html / css / json (vscode-*-language-server)、yaml。PATH に無くても `~/go/bin` (または `$GOPATH/bin`)、`~/.cargo/bin`、`~/.local/bin`、macOS の pip user install 先 (`~/Library/Python/*/bin`) は探します。それ以外の場所にあるコマンドや既定に無い言語は `languageServers` に書きます。
 
 ```js
 export const languageServers = {

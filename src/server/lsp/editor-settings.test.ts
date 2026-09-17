@@ -1,4 +1,4 @@
-import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -56,7 +56,7 @@ describe("言語サーバーの選択", () => {
     root = await mkdtemp(path.join(os.tmpdir(), "sage-path-"));
     await writeFile(path.join(root, "gopls"), "#!/bin/sh\n");
     await chmod(path.join(root, "gopls"), 0o755);
-    const options = { envPath: root, platform: "darwin" as const };
+    const options = { envPath: root, platform: "darwin" as const, home: root, goPath: undefined };
     const settings = { languages: {}, languageServers: { c: { command: "my-clangd", args: [] } } };
 
     // Act / Assert
@@ -64,8 +64,33 @@ describe("言語サーバーの選択", () => {
       command: "my-clangd",
       args: [],
     });
-    expect(resolveLanguageServer(settings, "go", options)).toEqual({ command: "gopls", args: [] });
+    expect(resolveLanguageServer(settings, "go", options)).toEqual({
+      command: path.join(root, "gopls"),
+      args: [],
+    });
     expect(resolveLanguageServer(settings, "python", options)).toBeNull();
     expect(resolveLanguageServer(settings, "moonbit", options)).toBeNull();
+  });
+
+  it("PATH に無くても go install や rustup、pip の置き場所は探す", async () => {
+    // Arrange: 偽のホームに ~/go/bin/gopls と ~/.cargo/bin/rust-analyzer を置く
+    root = await mkdtemp(path.join(os.tmpdir(), "sage-home-"));
+    for (const file of [
+      path.join("go", "bin", "gopls"),
+      path.join(".cargo", "bin", "rust-analyzer"),
+    ]) {
+      await mkdir(path.dirname(path.join(root, file)), { recursive: true });
+      await writeFile(path.join(root, file), "#!/bin/sh\n");
+      await chmod(path.join(root, file), 0o755);
+    }
+    const options = { envPath: "", platform: "darwin" as const, home: root, goPath: undefined };
+
+    // Act / Assert
+    expect(resolveLanguageServer(EMPTY_EDITOR_SETTINGS, "go", options)?.command).toBe(
+      path.join(root, "go", "bin", "gopls"),
+    );
+    expect(resolveLanguageServer(EMPTY_EDITOR_SETTINGS, "rust", options)?.command).toBe(
+      path.join(root, ".cargo", "bin", "rust-analyzer"),
+    );
   });
 });

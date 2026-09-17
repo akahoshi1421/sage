@@ -86,11 +86,11 @@ describe("言語サーバーの中継", () => {
     const port = await listen(server);
 
     // Act
-    const unknown = await closed(new WebSocket(`ws://127.0.0.1:${port}/_sage/lsp/python`));
+    const unknown = await closed(new WebSocket(`ws://127.0.0.1:${port}/_sage/lsp/moonbit`));
     const missing = await closed(new WebSocket(`ws://127.0.0.1:${port}/_sage/lsp/ghost`));
 
     // Assert
-    expect(unknown).toEqual({ code: 1008, reason: "no language server for python" });
+    expect(unknown).toEqual({ code: 1008, reason: "no language server for moonbit" });
     expect(missing.code).toBe(1011);
     expect(missing.reason).toContain("sage-no-such-language-server");
   });

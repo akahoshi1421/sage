@@ -27,7 +27,12 @@ export type EditorOpenContext = EditorSetupContext & {
 };
 
 /** 言語サーバーの起動方法 (sage がプロジェクトのルートで起動して中継する) */
-export type LanguageServerSpec = { command: string; args?: string[] };
+export type LanguageServerSpec = {
+  command: string;
+  args?: string[];
+  /** 起動ディレクトリ (プロジェクトのルートからの相対パス、例: `playground`)。言語サーバーのワークスペースもここになる */
+  cwd?: string;
+};
 
 /** `sage.editor.js` が export するもの (すべて省略可) */
 export type EditorAdapter = {

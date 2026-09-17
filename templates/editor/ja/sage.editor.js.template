@@ -23,6 +23,7 @@ export const languages = {
 export const languageServers = {
   // python: { command: "python3", args: ["-m", "pyright.langserver", "--stdio"] },
   // moonbit: { command: "moon", args: ["lsp"] },
+  // ruby: { command: "ruby-lsp", cwd: "playground" }, // playground/ の環境 (Gemfile など) をワークスペースにする
 };
 
 /*

@@ -23,14 +23,14 @@ disable-model-invocation: true
    - `template.{拡張子}`: 学習者が書き始めるためのテンプレート。書く場所をコメントで示す。拡張子は対象技術で使う言語に合わせる (TypeScript なら .ts、Python なら .py、Vue なら .vue など)。
    - `answer.{拡張子}`: 学習者が実際に回答を書き込むファイル。初期値は `template.{拡張子}` と同じ内容にする。
 5. 問題は実際に解けて採点できるものにする。要件は「〜という名前の関数が〜を返す」のように判定できる粒度で書く。
-6. 対象の技術の環境を用意する。まず言語のツールチェーン (例: `go version`、`python3 --version`、`cargo --version`) と言語サーバーがこのマシンにあるか確認する。無いものは、何をどう入れるか (例: `brew install go`、`go install golang.org/x/tools/gopls@latest`) を利用者に説明して確認を取ってから入れる。システムに入れる操作を勝手に行わない。利用者が入れないことを選んだら、Web 版は素のエディタ (補完なし) になり採点はコードを読んで行う、と伝えて先に進む。ライブラリはプロジェクト内に入れる (npm / pip / cargo / curl で取得した tar.gz の展開など、その技術で普通の方法)。Web 版のエディタ (Monaco) については次だけ行う。
-   - 言語サーバー (LSP) がある言語なら、それを入れる (Python: pyright、Go: gopls、C/C++: clangd、Rust: rust-analyzer、TypeScript: typescript-language-server など)。sage が起動と中継をする。PATH (または `~/go/bin`、`~/.cargo/bin`、pip の user install 先などよくある置き場所) にあれば宣言は不要で、そこに無いコマンドや sage の既定に無い言語だけ `sage.editor.js` の `languageServers` に起動コマンドを書く。言語サーバーが作法を要求するなら従う (Go は `go.mod` が必要で、同じディレクトリの `template.go` には `//go:build ignore` を付ける。Rust は Cargo プロジェクト。C/C++ で外部ライブラリを使うなら `compile_flags.txt`)。
+6. 対象の技術の環境を用意する。まず言語のツールチェーン (例: `go version`、`python3 --version`、`cargo --version`) と言語サーバーがこのマシンにあるか確認する。無いものは、何をどう入れるか (例: `brew install go`、`go install golang.org/x/tools/gopls@latest`) を利用者に説明して確認を取ってから入れる。システムに入れる操作を勝手に行わない。利用者が入れないことを選んだら、Web 版は素のエディタ (補完なし) になり採点はコードを読んで行う、と伝えて先に進む。ライブラリはプロジェクト内に入れる (npm / pip / cargo / curl で取得した tar.gz の展開など、その技術で普通の方法)。動かして確かめる必要がある技術 (Rails のようなフレームワーク、Go のモジュール、Cargo プロジェクトなど) は `playground/` に実際の環境を作る (例: `playground/` で `rails new .`、`go mod init`、`cargo init`)。問題文には `playground/` での確認手順 (回答ファイルのコピー先や実行コマンド) を書く。Web 版のエディタ (Monaco) については次だけ行う。
+   - 言語サーバー (LSP) がある言語なら、それを入れる (Python: pyright、Go: gopls、C/C++: clangd、Rust: rust-analyzer、TypeScript: typescript-language-server など)。sage が起動と中継をする。PATH (または `~/go/bin`、`~/.cargo/bin`、pip の user install 先などよくある置き場所) にあれば宣言は不要で、そこに無いコマンドや sage の既定に無い言語だけ `sage.editor.js` の `languageServers` に起動コマンドを書く。言語サーバーが `playground/` の環境 (Gemfile や `go.mod` など) をワークスペースとして必要とするなら `cwd: "playground"` も書く。言語サーバーが作法を要求するなら従う (Go は `go.mod` が必要で、同じディレクトリの `template.go` には `//go:build ignore` を付ける。Rust は Cargo プロジェクト。C/C++ で外部ライブラリを使うなら `compile_flags.txt`)。
    - sage が知らない拡張子 (MoonBit の `.mbt` など) は `sage.editor.js` の `languages` に拡張子 → 言語 ID を書く。
    - 言語サーバーが無い言語では何もしなくてよい (素のエディタで学習は成立する)。補完や色付けを自作しない。
 7. 生成後、問題の一覧 (番号・難易度・タイトル) を表示して終わる。
 
 ## 制約
 
-- `questions/`、`sage.editor.js`、対象の技術の環境の用意 (依存の追加など) 以外はプロジェクトを変更しない。動作確認のために一時ファイルを作った場合は、終了前に削除する。
+- `questions/`、`playground/`、`sage.editor.js`、対象の技術の環境の用意 (依存の追加など) 以外はプロジェクトを変更しない。動作確認のために一時ファイルを作った場合は、終了前に削除する。
 - すでに問題がある場合は、番号を続きから採番し、重複するテーマは避ける。
 - Markdown のコードブロックには必ず言語を指定する。

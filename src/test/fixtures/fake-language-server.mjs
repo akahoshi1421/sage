@@ -11,6 +11,8 @@ reader.listen((message) => {
       id: message.id,
       result: { capabilities: { hoverProvider: true } },
     });
+  } else if (message.method === "cwd") {
+    void writer.write({ jsonrpc: "2.0", id: message.id, result: process.cwd() });
   } else if (message.method === "echo") {
     void writer.write({ jsonrpc: "2.0", id: message.id, result: message.params });
   } else if (message.method === "exit") {

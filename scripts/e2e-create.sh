@@ -23,7 +23,7 @@ expect -re {coding agent} { send \"\r\" }
 expect -re {Language} { send \"\r\" }
 expect eof
 " >/dev/null
-test -f sage.config.json && test -f .claude/skills/sage-create/SKILL.md && test -f .claude/skills/sage-mark/SKILL.md
+test -f sage.config.json && test -f .claude/skills/sage-create/SKILL.md && test -f .claude/skills/sage-mark/SKILL.md && test -d playground
 
 echo "== install the packed sage and start the web app =="
 npm install --no-audit --no-fund "$TARBALL" >/dev/null

@@ -13,7 +13,7 @@ Question number: {{arguments}}
 ## Steps
 
 1. Find `questions/*/{number}-*/` and read `QUESTION.md` (requirements), `ANSWER.md` (reference solution) and `answer.*` (the learner's answer). `template.*` is only the starting point; do not grade it.
-2. Check the requirements one by one. Verify by running or type-checking the code when possible (you may write a temporary test outside `questions/`, but never modify files inside `questions/`). If it cannot be run, judge by reading the code.
+2. Check the requirements one by one. Verify by running or type-checking the code when possible. If `playground/` holds an environment, run there (for example copy the answer file to the place the question describes and run the command it gives). You may write a temporary test, but never modify files inside `questions/`, and undo any temporary change to `playground/` before finishing. If it cannot be run, judge by reading the code.
 3. Decide the verdict.
    - 🟢 Correct: all requirements are met
    - 🟡 Almost: mostly right, but some requirements are not met

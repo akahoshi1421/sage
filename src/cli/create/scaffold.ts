@@ -124,7 +124,9 @@ export async function scaffoldProject(options: ScaffoldOptions): Promise<Scaffol
   const skillsDir = skillsDirectoryFor(agent);
   const config: SageConfig = { agent, locale, language };
 
-  await mkdir(path.join(root, "questions"), { recursive: true });
+  await Promise.all(
+    ["questions", "playground"].map((dir) => mkdir(path.join(root, dir), { recursive: true })),
+  );
   await Promise.all(
     SKILLS.map((name) => mkdir(path.join(root, skillsDir, name), { recursive: true })),
   );
@@ -132,6 +134,7 @@ export async function scaffoldProject(options: ScaffoldOptions): Promise<Scaffol
   const files: Array<[string, string]> = [
     ["sage.config.json", `${JSON.stringify(config, null, 2)}\n`],
     [path.join("questions", ".gitkeep"), ""],
+    [path.join("playground", ".gitkeep"), ""],
     ...(await Promise.all(
       SKILLS.map(async (name): Promise<[string, string]> => [
         path.join(skillsDir, name, "SKILL.md"),

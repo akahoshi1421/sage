@@ -4,7 +4,8 @@ import type { Server as HttpServer } from "node:http";
 import { type Message, StreamMessageReader, StreamMessageWriter } from "vscode-jsonrpc/node";
 import { type RawData, type WebSocket, WebSocketServer } from "ws";
 
-import { loadLanguageServers } from "./language-servers";
+import { loadEditorSettings } from "./editor-settings";
+import { resolveLanguageServer } from "./language-servers";
 
 /** WebSocket のパス。`/_sage/lsp/{Monaco の言語 ID}` */
 export const LSP_PATH_PREFIX = "/_sage/lsp/";
@@ -46,7 +47,7 @@ async function bridgeLanguageServer(ws: WebSocket, language: string, root: strin
 
   let spec;
   try {
-    spec = (await loadLanguageServers(root))[language];
+    spec = resolveLanguageServer(await loadEditorSettings(root), language);
   } catch (error) {
     ws.close(1011, closeReason(`sage.editor.js: ${errorMessage(error)}`));
     return;

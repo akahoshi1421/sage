@@ -1,43 +1,17 @@
-import { stat } from "node:fs/promises";
-import path from "node:path";
-import { pathToFileURL } from "node:url";
-
-import { z } from "zod";
-
-import { EDITOR_ADAPTER_FILE } from "../paths";
-
-const specSchema = z.object({
-  /** 起動コマンド (PATH から探す) */
-  command: z.string().min(1),
-  args: z.array(z.string()).default([]),
-});
-
-export type LanguageServerSpec = z.infer<typeof specSchema>;
-
-/** Monaco の言語 ID → 言語サーバーの起動方法 */
-const languageServersSchema = z.record(z.string(), specSchema);
-
-const isMissingFile = (error: unknown) =>
-  typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
+import { DEFAULT_LANGUAGE_SERVERS, isOnPath } from "./default-language-servers";
+import type { EditorSettings, LanguageServerSpec } from "./editor-settings";
 
 /**
- * `sage.editor.js` が export する `languageServers` を読む (無ければ空)。
- * ブラウザ向けのファイルだが、起動コマンドはサーバー側で決める必要があるのでここでも読み込む。
+ * 言語に使う言語サーバーを決める。プロジェクトの宣言が最優先 (入っていなくてもそのまま使い、失敗は接続時に分かる)。
+ * 宣言が無ければ既定の候補のうち PATH にあるものを使い、無ければ null (言語サーバーなしで動く)。
  */
-export async function loadLanguageServers(
-  root: string,
-): Promise<Record<string, LanguageServerSpec>> {
-  const file = path.join(root, EDITOR_ADAPTER_FILE);
-  let modifiedAt: number;
-  try {
-    modifiedAt = (await stat(file)).mtimeMs;
-  } catch (error) {
-    if (isMissingFile(error)) return {};
-    throw error;
-  }
-  // import はキャッシュされるので、編集後に読み直せるよう更新時刻をクエリに付ける
-  const adapter = (await import(`${pathToFileURL(file).href}?mtime=${modifiedAt}`)) as {
-    languageServers?: unknown;
-  };
-  return languageServersSchema.parse(adapter.languageServers ?? {});
+export function resolveLanguageServer(
+  settings: EditorSettings,
+  language: string,
+  options: { envPath?: string; platform?: NodeJS.Platform } = {},
+): LanguageServerSpec | null {
+  const declared = settings.languageServers[language];
+  if (declared) return declared;
+  const candidates = DEFAULT_LANGUAGE_SERVERS[language] ?? [];
+  return candidates.find((candidate) => isOnPath(candidate.command, options)) ?? null;
 }

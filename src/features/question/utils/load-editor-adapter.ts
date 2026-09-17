@@ -35,7 +35,9 @@ export type EditorAdapter = {
   setup?: (context: EditorSetupContext) => void | Promise<void>;
   /** 問題を開くたびに呼ばれる (エディタの設定) */
   open?: (context: EditorOpenContext) => void | Promise<void>;
-  /** Monaco の言語 ID ごとの言語サーバー (LSP) */
+  /** 拡張子 (ドット無し) → Monaco の言語 ID。sage が知らない言語のために宣言する */
+  languages?: Record<string, string>;
+  /** Monaco の言語 ID ごとの言語サーバー (LSP)。宣言が無い言語は sage の既定の候補から PATH にあるものを使う */
   languageServers?: Record<string, LanguageServerSpec>;
 };
 

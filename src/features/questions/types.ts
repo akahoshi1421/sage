@@ -30,6 +30,8 @@ export type QuestionDetail = QuestionSummary & {
   answerFileName: string;
   /** 回答ファイルのプロジェクトルートからの相対パス (例: `questions/easy/2-safe-parse/answer.ts`) */
   answerFilePath: string;
+  /** エディタと言語サーバーに使う Monaco の言語 ID (例: `typescript`、`python`)。sage.editor.js の languages で上書きできる */
+  language: string;
   /** 回答ファイルの現在の内容 */
   answerCode: string;
 };

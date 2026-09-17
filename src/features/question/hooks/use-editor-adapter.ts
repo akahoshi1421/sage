@@ -31,15 +31,24 @@ const loadAdapterOnce = () =>
 const languageServerUrl = (language: string) =>
   `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/_sage/lsp/${encodeURIComponent(language)}`;
 
+/** 言語サーバーのワークスペース (cwd が宣言されていればその下) */
+const workspaceUri = (rootUri: string, spec: LanguageServerSpec) =>
+  spec.cwd ? `${rootUri}/${spec.cwd.replace(/^\.?\/+|\/+$/g, "")}` : rootUri;
+
 /** 言語ごとに 1 本だけ接続する。切れたら次回つなぎ直す */
-const connectLanguageServer = (monaco: Monaco, language: string, rootUri: string) => {
+const connectLanguageServer = (
+  monaco: Monaco,
+  language: string,
+  rootUri: string,
+  spec: LanguageServerSpec,
+) => {
   let client = clients.get(language);
   if (!client) {
     client = LanguageClient.connect({
       monaco,
       socket: new WebSocket(languageServerUrl(language)),
       language,
-      rootUri,
+      rootUri: workspaceUri(rootUri, spec),
     });
     clients.set(language, client);
     client
@@ -114,7 +123,7 @@ export function useEditorAdapter(
         const command = [spec.command, ...(spec.args ?? [])].join(" ");
         setStatus({ state: "connecting", command });
         try {
-          const client = await connectLanguageServer(monaco, language, rootUri);
+          const client = await connectLanguageServer(monaco, language, rootUri, spec);
           if (model) editor.onDidDispose(client.attach(model));
           client.onDidClose((reason) => setStatus({ state: "error", command, reason }));
           setStatus({ state: "ready", command });

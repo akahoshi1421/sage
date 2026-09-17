@@ -10,6 +10,8 @@ const languageServerSchema = z.object({
   /** 起動コマンド (PATH から探す) */
   command: z.string().min(1),
   args: z.array(z.string()).default([]),
+  /** 起動ディレクトリ (プロジェクトのルートからの相対パス、例: `playground`)。言語サーバーのワークスペースもここになる */
+  cwd: z.string().optional(),
 });
 
 export type LanguageServerSpec = z.infer<typeof languageServerSchema>;

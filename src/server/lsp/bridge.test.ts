@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import os from "node:os";
@@ -72,6 +72,31 @@ describe("言語サーバーの中継", () => {
       result: { capabilities: { hoverProvider: true } },
     });
     expect(echoed).toEqual({ jsonrpc: "2.0", id: 2, result: { hello: "world" } });
+  });
+
+  it("cwd を宣言すると言語サーバーはそのディレクトリ (プロジェクト内) で起動する", async () => {
+    // Arrange
+    root = await mkdtemp(path.join(os.tmpdir(), "sage-bridge-"));
+    await mkdir(path.join(root, "playground"));
+    await writeFile(
+      path.join(root, "sage.editor.js"),
+      `export const languageServers = { ruby: { command: ${JSON.stringify(process.execPath)}, args: [${JSON.stringify(fakeServer)}], cwd: "playground" }, evil: { command: "sh", cwd: "../" } };\n`,
+    );
+    server = createServer();
+    attachLspBridge(server, { root });
+    const port = await listen(server);
+    const ws = new WebSocket(`ws://127.0.0.1:${port}/_sage/lsp/ruby`);
+    await new Promise((resolve) => ws.addEventListener("open", resolve, { once: true }));
+
+    // Act
+    ws.send(JSON.stringify({ jsonrpc: "2.0", id: 1, method: "cwd", params: {} }));
+    const reply = (await nextMessage(ws)) as { result: string };
+    ws.close();
+    const evil = await closed(new WebSocket(`ws://127.0.0.1:${port}/_sage/lsp/evil`));
+
+    // Assert
+    expect(await realpath(reply.result)).toBe(await realpath(path.join(root, "playground")));
+    expect(evil.code).toBe(1008);
   });
 
   it("宣言されていない言語や存在しないコマンドは理由付きで切断される", async () => {

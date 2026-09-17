@@ -56,7 +56,8 @@ describe("学習環境の展開", () => {
     expect(pkg.scripts.start).toBe("sage start");
     expect(pkg.devDependencies["@akahoshi1421/sage"]).toBe("^1.2.3");
     await expect(read(".gitignore")).resolves.toContain(".sage/");
-    await expect(read("sage.editor.js")).resolves.toContain("export async function setup(");
+    await expect(read("sage.editor.js")).resolves.toContain("export const languageServers");
+    await expect(read("playground/.gitkeep")).resolves.toBe("");
   });
 
   it("既にある sage.editor.js は上書きされない", async () => {

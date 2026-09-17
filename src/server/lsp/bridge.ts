@@ -4,6 +4,7 @@ import type { Server as HttpServer } from "node:http";
 import { type Message, StreamMessageReader, StreamMessageWriter } from "vscode-jsonrpc/node";
 import { type RawData, type WebSocket, WebSocketServer } from "ws";
 
+import { resolveInsideRoot } from "../editor/project-files";
 import { loadEditorSettings } from "./editor-settings";
 import { resolveLanguageServer } from "./language-servers";
 
@@ -57,7 +58,12 @@ async function bridgeLanguageServer(ws: WebSocket, language: string, root: strin
     return;
   }
 
-  const child = spawn(spec.command, spec.args, { cwd: root, stdio: ["pipe", "pipe", "pipe"] });
+  const cwd = resolveInsideRoot(root, spec.cwd ?? ".");
+  if (!cwd) {
+    ws.close(1008, closeReason(`cwd はプロジェクトの中を指してください: ${spec.cwd}`));
+    return;
+  }
+  const child = spawn(spec.command, spec.args, { cwd, stdio: ["pipe", "pipe", "pipe"] });
   let lastStderr = "";
   child.stderr.on("data", (chunk: Buffer) => {
     lastStderr = `${lastStderr}${chunk.toString()}`.slice(-2000);

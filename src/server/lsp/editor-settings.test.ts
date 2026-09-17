@@ -80,8 +80,7 @@ describe("言語サーバーの選択", () => {
       [path.join("go", "bin", "gopls"), path.join(".cargo", "bin", "rust-analyzer")].map(
         async (file) => {
           await mkdir(path.dirname(path.join(home, file)), { recursive: true });
-          await writeFile(path.join(home, file), "#!/bin/sh
-");
+          await writeFile(path.join(home, file), "#!/bin/sh\n");
           await chmod(path.join(home, file), 0o755);
         },
       ),
